@@ -28,6 +28,9 @@ func TestBackEnd(t *testing.T) {
 		"DFS://" + cid,
 		"dfs:///file/" + cid,
 		"dfs:///Fake" + cid,
+		"hello world" + cid,
+		// ASCII control character for coverage
+		string([]byte{0x7f}) + cid,
 	}
 
 	for _, uri := range incorrectUris {
@@ -52,4 +55,11 @@ func TestBackEnd(t *testing.T) {
 	assert.NilError(t, err)
 
 	assert.DeepEqual(t, testData, dfsData)
+
+	err = dagReader.Close()
+	assert.NilError(t, err)
+
+	// Missing Close coverage as dagReader Close does not seem to fail
+
+	backend.Close()
 }
