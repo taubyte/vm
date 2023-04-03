@@ -12,7 +12,6 @@ type module struct {
 	source          []byte
 	imports         []string
 	importsByModule map[string][]string
-	holdRuntime     bool
 }
 
 var _ vm.SourceModule = &module{}
@@ -20,7 +19,7 @@ var _ vm.SourceModule = &module{}
 func New(source []byte) (vm.SourceModule, error) {
 	decoded, err := binary.DecodeModule(source, wasm.Features20220419, wasm.MemorySizer)
 	if err != nil {
-		return nil, fmt.Errorf("Decoding sections failed with %w", err)
+		return nil, fmt.Errorf("decoding sections failed with %w", err)
 	}
 
 	imports := make([]string, len(decoded.ImportSection))
