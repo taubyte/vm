@@ -1,36 +1,31 @@
-package dfs
+package dfs_test
 
 import (
 	"bytes"
 	"compress/lzw"
-	"context"
 	"io"
 	"testing"
 
-	peer "github.com/taubyte/go-interfaces/p2p/peer/mocks"
+	"github.com/taubyte/vm/backend/dfs"
 	fixtures "github.com/taubyte/vm/fixtures/wasm"
+	"github.com/taubyte/vm/test"
 	"gotest.tools/v3/assert"
 )
 
 func TestBackEnd(t *testing.T) {
-	ctx := context.Background()
-	simpleNode := peer.New(ctx)
-
-	backend := New(simpleNode)
-	assert.Equal(t, backend.Scheme(), Scheme)
-
-	cid, err := simpleNode.AddFile(bytes.NewReader(fixtures.Recursive))
+	backend, err := test.DFSBackend().Inject(bytes.NewReader(fixtures.Recursive))
 	assert.NilError(t, err)
+	assert.Equal(t, backend.Scheme(), dfs.Scheme)
 
 	incorrectUris := []string{
-		"dfs://" + cid,
-		"Dfs://" + cid,
-		"DFS://" + cid,
-		"dfs:///file/" + cid,
-		"dfs:///Fake" + cid,
-		"hello world" + cid,
+		"dfs://" + backend.Cid,
+		"Dfs://" + backend.Cid,
+		"DFS://" + backend.Cid,
+		"dfs:///file/" + backend.Cid,
+		"dfs:///Fake" + backend.Cid,
+		"hello world" + backend.Cid,
 		// ASCII control character for coverage
-		string([]byte{0x7f}) + cid,
+		string([]byte{0x7f}) + backend.Cid,
 	}
 
 	for _, uri := range incorrectUris {
@@ -39,7 +34,7 @@ func TestBackEnd(t *testing.T) {
 		}
 	}
 
-	dagReader, err := backend.Get("dfs:///" + cid)
+	dagReader, err := backend.Get("dfs:///" + backend.Cid)
 	assert.NilError(t, err)
 
 	dfsData, err := io.ReadAll(dagReader)

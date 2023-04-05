@@ -53,6 +53,7 @@ func TestContext(t *testing.T) {
 		return
 	}
 
+	// Options error: errOption always returns error, when applying options New will fail
 	_, err = New(baseContext, errOption())
 	assert.Error(t, err, errorFoo.Error())
 }

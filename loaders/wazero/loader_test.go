@@ -1,78 +1,27 @@
-package loader
+package loader_test
 
 import (
-	"bytes"
-	gocontext "context"
+	"fmt"
 	"io"
 	"testing"
 
-	peer "github.com/taubyte/go-interfaces/p2p/peer/mocks"
-	tns "github.com/taubyte/go-interfaces/services/tns/mocks"
 	functionSpec "github.com/taubyte/go-specs/function"
-	structureSpec "github.com/taubyte/go-specs/structure"
-	"github.com/taubyte/utils/id"
-	"github.com/taubyte/vm/backend/dfs"
-	"github.com/taubyte/vm/context"
 	fixtures "github.com/taubyte/vm/fixtures/wasm"
-	resolvers "github.com/taubyte/vm/resolvers/taubyte"
+	loaders "github.com/taubyte/vm/loaders/wazero"
+	"github.com/taubyte/vm/test"
 	"gotest.tools/v3/assert"
 )
 
-var (
-	testFunc = structureSpec.Function{
-		Id:      id.Generate(),
-		Name:    "basicFunc",
-		Type:    "http",
-		Memory:  10000,
-		Timeout: 100000000,
-		Method:  "GET",
-		Source:  ".",
-		Call:    "basic",
-		Paths:   []string{"/ping"},
-		Domains: []string{"somDomain"},
-	}
-
-	mockConfig = tns.InjectConfig{
-		Branch:      "master",
-		Commit:      "head_commit",
-		Project:     id.Generate(),
-		Application: id.Generate(),
-	}
-
-	contextOptions = []context.Option{
-		context.Application(mockConfig.Application),
-		context.Project(mockConfig.Project),
-		context.Resource(testFunc.Id),
-		context.Branch(mockConfig.Branch),
-		context.Commit(mockConfig.Commit),
-	}
-)
-
 func TestLoader(t *testing.T) {
-	goctx := gocontext.Background()
+	test.ResetVars()
 
-	simpleNode := peer.New(goctx)
-	backend := dfs.New(simpleNode)
-
-	cid, err := simpleNode.AddFile(bytes.NewReader(fixtures.Recursive))
+	cid, loader, resolver, _, simple, err := test.Loader()
 	assert.NilError(t, err)
 
-	tnsClient := tns.New()
-
-	mockConfig.Cid = cid
-	if err = tnsClient.Inject(&testFunc, mockConfig); err != nil {
-		t.Error(err)
-		return
-	}
-
-	resolver := resolvers.New(tnsClient)
-
-	loader := New(resolver, backend)
-
-	ctx, err := context.New(goctx, contextOptions...)
+	ctx, err := test.Context()
 	assert.NilError(t, err)
 
-	moduleName := functionSpec.ModuleName(testFunc.Name)
+	moduleName := functionSpec.ModuleName(test.TestFunc.Name)
 
 	reader, err := loader.Load(ctx, moduleName)
 	assert.NilError(t, err)
@@ -83,19 +32,28 @@ func TestLoader(t *testing.T) {
 	assert.DeepEqual(t, fixtures.NonCompressRecursive, source)
 
 	// Test Failures
-	err = simpleNode.DeleteFile(cid)
+
+	// Delete ipfs stored file
+	err = simple.DeleteFile(cid)
 	assert.NilError(t, err)
 
+	// No Reader Error: All backends have been checked, but all returned nil readers.
 	if _, err = loader.Load(ctx, moduleName); err == nil {
 		t.Error("expected error")
 	}
 
-	loader = New(resolver)
+	fmt.Println(err)
+
+	// New Loader with no backends
+	loader = loaders.New(resolver)
+	// Backend Error: Creating a loader with no backends results in failure
 	if _, err = loader.Load(ctx, moduleName); err == nil {
 		t.Error("expected error")
 	}
 
-	if _, err = loader.Load(ctx, testFunc.Name); err == nil {
+	// Lookup Error: Attempting to load module that does not follow convention of <type>/<name>
+	if _, err = loader.Load(ctx, test.TestFunc.Name); err == nil {
 		t.Error("expected error")
 	}
+
 }
