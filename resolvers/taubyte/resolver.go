@@ -26,8 +26,6 @@ func New(client tns.Client) vm.Resolver {
 }
 
 func (s *resolver) Lookup(ctx vm.Context, name string) (string, error) {
-	// TODO:: DO THIS ALL BETTER USE REGEX
-
 	splitModule := strings.Split(name, "/")
 	if len(splitModule) < 2 {
 		return "", fmt.Errorf("name should follow convention <moduleType>/<moduleName> got: `%s`", name)
@@ -85,12 +83,7 @@ func internalDFSPath(ctx vm.Context, tns tns.Client, moduleType string, moduleNa
 		return "", fmt.Errorf("current module `%s`  in `%s` returned too many paths, theres an issue with the compiler", module, project)
 	}
 
-	object, err := tns.Fetch(currentPath[0])
-	if err != nil {
-		return "", fmt.Errorf("fetching current commit for module `%s`  in `%s` failed with: %s", module, project, err)
-	}
-
-	parser, err := extract.Tns().BasicPath(object.Path().String())
+	parser, err := extract.Tns().BasicPath(currentPath[0].String())
 	if err != nil {
 		return "", err
 	}
