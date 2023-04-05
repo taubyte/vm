@@ -16,8 +16,10 @@ require (
 	github.com/ipfs/go-datastore v0.6.0 // indirect
 	github.com/libp2p/go-libp2p-core v0.20.1 // indirect
 	github.com/libp2p/go-libp2p-pubsub v0.9.3 // indirect
-	github.com/taubyte/utils v0.1.5 // indirect
+	github.com/taubyte/utils v0.1.5
 )
+
+replace github.com/taubyte/go-specs => ../../Repos/go-specs
 
 replace github.com/taubyte/go-interfaces v0.0.1-test => ../go-interfaces
 
@@ -28,6 +30,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -104,6 +107,7 @@ require (
 	github.com/quic-go/qtls-go1-20 v0.1.1 // indirect
 	github.com/quic-go/quic-go v0.33.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/taubyte/domain-validation v1.0.0 // indirect
 	github.com/whyrusleeping/cbor-gen v0.0.0-20230126041949-52956bd4c9aa // indirect
 	go.opentelemetry.io/otel v1.14.0 // indirect
 	go.opentelemetry.io/otel/trace v1.14.0 // indirect

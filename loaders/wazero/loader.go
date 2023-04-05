@@ -24,11 +24,11 @@ func New(resolver vm.Resolver, backends ...vm.Backend) vm.Loader {
 func (l *loader) Load(ctx vm.Context, module string) (io.ReadCloser, error) {
 	uri, err := l.resolver.Lookup(ctx, module)
 	if err != nil {
-		return nil, fmt.Errorf("Loading module %s @ %s failed with %w", module, ctx.Project(), err)
+		return nil, fmt.Errorf("loading module %s @ %s failed with %w", module, ctx.Project(), err)
 	}
 
 	if len(l.backends) == 0 {
-		return nil, fmt.Errorf("Fetching module %s @ %s failed with no backend found", module, ctx.Project())
+		return nil, fmt.Errorf("fetching module %s @ %s failed with no backend found", module, ctx.Project())
 	}
 
 	for _, backend := range l.backends {
@@ -39,5 +39,5 @@ func (l *loader) Load(ctx vm.Context, module string) (io.ReadCloser, error) {
 
 	}
 
-	return nil, fmt.Errorf("Fetching module %s @ %s failed ", module, ctx.Project())
+	return nil, fmt.Errorf("fetching module %s @ %s failed ", module, ctx.Project())
 }

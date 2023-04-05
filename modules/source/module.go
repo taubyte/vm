@@ -29,6 +29,7 @@ func New(source []byte) (vm.SourceModule, error) {
 		if importsByModule[imp.Module] == nil {
 			importsByModule[imp.Module] = make([]string, 0)
 		}
+
 		importsByModule[imp.Module] = append(importsByModule[imp.Module], imp.Name)
 	}
 

@@ -13,9 +13,10 @@ import (
 )
 
 var (
-	testFunc       structureSpec.Function
-	mockConfig     mocks.InjectConfig
-	contextOptions []context.Option
+	testFunc         structureSpec.Function
+	mockConfig       mocks.InjectConfig
+	mockGlobalConfig mocks.InjectConfig
+	contextOptions   []context.Option
 
 	testEndPoint = "https://ping.examples.tau.link/ping"
 	wd           string
@@ -43,6 +44,9 @@ func resetVars() {
 		Domains: []string{"somDomain"},
 	}
 
+	mockGlobalConfig = mockConfig
+	mockGlobalConfig.Application = ""
+
 	contextOptions = []context.Option{
 		context.Application(mockConfig.Application),
 		context.Project(mockConfig.Project),
@@ -62,10 +66,18 @@ func init() {
 	resetVars()
 }
 
-func newResolver(t *testing.T) vm.Resolver {
+func newResolver(t *testing.T) (mocks.MockedTns, vm.Resolver) {
 	tnsClient := mocks.New()
 	err := tnsClient.Inject(&testFunc, mockConfig)
 	assert.NilError(t, err)
 
-	return New(tnsClient)
+	return tnsClient, New(tnsClient)
+}
+
+func newGlobalResolver(t *testing.T) (mocks.MockedTns, vm.Resolver) {
+	tnsClient := mocks.New()
+	err := tnsClient.Inject(&testFunc, mockGlobalConfig)
+	assert.NilError(t, err)
+
+	return tnsClient, New(tnsClient)
 }

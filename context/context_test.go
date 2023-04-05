@@ -2,6 +2,7 @@ package context
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -15,7 +16,15 @@ var (
 	resourceId    = "resourceId"
 	branch        = "main"
 	commit        = "commit"
+
+	errorFoo = errors.New("forced failure")
 )
+
+func errOption() Option {
+	return func(vc *vmContext) error {
+		return errorFoo
+	}
+}
 
 func TestContext(t *testing.T) {
 	baseContext := context.Background()
@@ -38,9 +47,12 @@ func TestContext(t *testing.T) {
 
 	select {
 	case <-ctx.Context().Done():
-		return
+		break
 	case <-time.After(time.Second):
 		t.Error("expected context cancel")
 		return
 	}
+
+	_, err = New(baseContext, errOption())
+	assert.Error(t, err, errorFoo.Error())
 }
