@@ -1,6 +1,7 @@
 package source
 
 import (
+	"bytes"
 	"testing"
 
 	functionSpec "github.com/taubyte/go-specs/function"
@@ -12,7 +13,9 @@ import (
 func TestSource(t *testing.T) {
 	test.ResetVars()
 
-	_, loader, _, _, _, _ := test.Loader()
+	_, loader, _, _, _, err := test.Loader(bytes.NewReader(fixtures.Recursive))
+	assert.NilError(t, err)
+
 	source := New(loader)
 
 	ctx, err := test.Context()

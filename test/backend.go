@@ -1,7 +1,6 @@
 package test
 
 import (
-	"bytes"
 	"context"
 	"io"
 
@@ -11,7 +10,6 @@ import (
 	"github.com/taubyte/vm/backend/dfs"
 	"github.com/taubyte/vm/backend/fs"
 	"github.com/taubyte/vm/backend/http"
-	fixtures "github.com/taubyte/vm/fixtures/wasm"
 
 	peer "github.com/taubyte/go-interfaces/p2p/peer/mocks"
 )
@@ -45,10 +43,10 @@ func HTTPBackend() vm.Backend {
 	return http.New(*goHttp.DefaultClient)
 }
 
-func AllBackends(injectDefault bool) (cid string, simpleNode peer.MockedNode, backends []vm.Backend, err error) {
+func AllBackends(injectReader io.Reader) (cid string, simpleNode peer.MockedNode, backends []vm.Backend, err error) {
 	dfsBe := DFSBackend()
-	if injectDefault {
-		if dfsBe, err = dfsBe.Inject(bytes.NewReader(fixtures.Recursive)); err != nil {
+	if injectReader != nil {
+		if dfsBe, err = dfsBe.Inject(injectReader); err != nil {
 			return
 		}
 	}

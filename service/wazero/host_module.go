@@ -5,11 +5,11 @@ import (
 	"reflect"
 
 	"github.com/taubyte/go-interfaces/vm"
-	"github.com/taubyte/vm/common"
+	wazero "github.com/taubyte/go-interfaces/vm/wazero"
 	wasm "github.com/tetratelabs/wazero/api"
 )
 
-var moduleType = reflect.TypeOf((*common.Module)(nil)).Elem()
+var moduleType = reflect.TypeOf((*wazero.Module)(nil)).Elem()
 var wazeroModuleType = reflect.TypeOf((*wasm.Module)(nil)).Elem()
 
 func (hm *hostModule) Function(def *vm.HostModuleFunctionDefinition) error {

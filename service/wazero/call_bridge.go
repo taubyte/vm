@@ -3,13 +3,13 @@ package service
 import (
 	"context"
 
-	"github.com/taubyte/vm/common"
+	wazero "github.com/taubyte/go-interfaces/vm/wazero"
 	"github.com/tetratelabs/wazero/api"
 )
 
-/******************************** common.Module <> api.Module ****************************************/
+/******************************** wazero.Module <> api.Module ****************************************/
 
-var _ common.Module = &callContext{}
+var _ wazero.Module = &callContext{}
 
 type callContext struct {
 	wazero api.Module
@@ -27,19 +27,19 @@ func (c *callContext) CloseWithExitCode(exitCode uint32) error {
 	return c.wazero.CloseWithExitCode(context.TODO(), exitCode)
 }
 
-func (c *callContext) Memory() common.Memory {
+func (c *callContext) Memory() wazero.Memory {
 	return &memory{wazero: c.wazero.Memory()}
 }
 
-func (c *callContext) ExportedFunction(name string) common.Function {
+func (c *callContext) ExportedFunction(name string) wazero.Function {
 	return &importedFn{wazero: c.wazero.ExportedFunction(name)}
 }
 
-func (c *callContext) ExportedMemory(name string) common.Memory {
+func (c *callContext) ExportedMemory(name string) wazero.Memory {
 	return &memory{wazero: c.wazero.ExportedMemory(name)}
 }
 
-func (c *callContext) ExportedGlobal(name string) common.Global {
+func (c *callContext) ExportedGlobal(name string) wazero.Global {
 	return &global{wazero: c.wazero.ExportedGlobal(name)}
 }
 
@@ -47,7 +47,7 @@ func (c *callContext) String() string {
 	return c.wazero.String()
 }
 
-/******************************** common.Memory <> api.Memory ****************************************/
+/******************************** wazero.Memory <> api.Memory ****************************************/
 type memory struct {
 	wazero api.Memory
 }
@@ -124,12 +124,12 @@ func (m *memory) Write(offset uint32, v []byte) bool {
 	return m.wazero.Write(offset, v)
 }
 
-/******************************** common.Function <> api.Function ****************************************/
+/******************************** wazero.Function <> api.Function ****************************************/
 type importedFn struct {
 	wazero api.Function
 }
 
-func (f *importedFn) Definition() common.FunctionDefinition {
+func (f *importedFn) Definition() wazero.FunctionDefinition {
 	return &importedFnDef{f.wazero.Definition()}
 }
 
@@ -165,22 +165,22 @@ func (f *importedFnDef) DebugName() string {
 	return f.wazero.DebugName()
 }
 
-func (f *importedFnDef) ParamTypes() []common.ValueType {
+func (f *importedFnDef) ParamTypes() []wazero.ValueType {
 	_vt := f.wazero.ParamTypes()
 	count := len(_vt)
-	vt := make([]common.ValueType, count)
+	vt := make([]wazero.ValueType, count)
 	for i := 0; i < count; i++ {
-		vt[i] = common.ValueType(_vt[i])
+		vt[i] = wazero.ValueType(_vt[i])
 	}
 	return vt
 }
 
-func (f *importedFnDef) ResultTypes() []common.ValueType {
+func (f *importedFnDef) ResultTypes() []wazero.ValueType {
 	_vt := f.wazero.ResultTypes()
 	count := len(_vt)
-	vt := make([]common.ValueType, count)
+	vt := make([]wazero.ValueType, count)
 	for i := 0; i < count; i++ {
-		vt[i] = common.ValueType(_vt[i])
+		vt[i] = wazero.ValueType(_vt[i])
 	}
 	return vt
 }
@@ -189,13 +189,13 @@ func (f *importedFnDef) ParamNames() []string {
 	return f.wazero.ParamNames()
 }
 
-/******************************** common.Global <> api.Global ****************************************/
+/******************************** wazero.Global <> api.Global ****************************************/
 type global struct {
 	wazero api.Global
 }
 
-func (g *global) Type() common.ValueType {
-	return common.ValueType(g.wazero.Type())
+func (g *global) Type() wazero.ValueType {
+	return wazero.ValueType(g.wazero.Type())
 }
 
 func (g *global) Get() uint64 {

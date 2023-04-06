@@ -17,13 +17,14 @@ func TestFS(t *testing.T) {
 	wd, err := os.Getwd()
 	assert.NilError(t, err)
 
-	fsPath := path.Join(wd, "..", "..", "fixtures", "wasm", "recursive.wasm")
+	relativePath := "../../fixtures/wasm/recursive.wasm"
+	fsPath := path.Join(wd, relativePath)
 
 	incorrectUris := []string{
 		"fs:/" + fsPath,
 		"file:/" + fsPath,
 		"dfs/" + fsPath,
-		"hello world" + fsPath,
+		"fs:///" + Encode("hello world/"+fsPath),
 		// ASCII control character for coverage
 		string([]byte{0x7f}) + fsPath,
 	}
@@ -35,10 +36,18 @@ func TestFS(t *testing.T) {
 		}
 	}
 
-	fsReader, err := backend.Get("fs://" + fsPath)
+	fsReader, err := backend.Get("fs:///" + Encode(fsPath))
 	assert.NilError(t, err)
 
 	fsData, err := io.ReadAll(fsReader)
+	assert.NilError(t, err)
+
+	assert.DeepEqual(t, fsData, fixtures.NonCompressRecursive)
+
+	fsReader, err = backend.Get("fs:///" + Encode(relativePath))
+	assert.NilError(t, err)
+
+	fsData, err = io.ReadAll(fsReader)
 	assert.NilError(t, err)
 
 	assert.DeepEqual(t, fsData, fixtures.NonCompressRecursive)

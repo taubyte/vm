@@ -9,6 +9,7 @@ import (
 	"github.com/taubyte/go-interfaces/vm"
 	functionSpec "github.com/taubyte/go-specs/function"
 	"github.com/taubyte/go-specs/methods"
+	"github.com/taubyte/vm/backend/fs"
 	"github.com/taubyte/vm/context"
 	"github.com/taubyte/vm/test"
 
@@ -41,7 +42,7 @@ func TestResolverHTTP(t *testing.T) {
 
 func TestResolverFS(t *testing.T) {
 	test.ResetVars()
-	basicLookUp(t, false, "fs/"+test.Wd, "fs:///"+test.Wd)
+	basicLookUp(t, false, "fs/"+test.Wd, "fs:///"+fs.Encode(test.Wd))
 }
 
 func TestResolverDFS(t *testing.T) {

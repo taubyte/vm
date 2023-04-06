@@ -11,6 +11,7 @@ import (
 	librarySpec "github.com/taubyte/go-specs/library"
 	"github.com/taubyte/go-specs/methods"
 	smartOpSpec "github.com/taubyte/go-specs/smartops"
+	"github.com/taubyte/vm/backend/fs"
 )
 
 type resolver struct {
@@ -39,7 +40,7 @@ func (s *resolver) Lookup(ctx vm.Context, name string) (string, error) {
 	case "http":
 		return moduleName, nil
 	case "fs":
-		return fmt.Sprintf("fs:///%s", moduleName), nil
+		return fmt.Sprintf("fs:///%s", fs.Encode(moduleName)), nil
 	default:
 		return "", fmt.Errorf("unknown module type `%s`", moduleType)
 	}

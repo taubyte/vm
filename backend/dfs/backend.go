@@ -14,7 +14,6 @@ import (
 	"github.com/taubyte/vm/backend/i18n"
 )
 
-// TODO: Move to specs
 var (
 	Scheme     = "dfs"
 	GetTimeout = 3 * time.Second

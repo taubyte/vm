@@ -22,13 +22,13 @@ var (
 func ResetVars() (err error) {
 	TestFunc = structureSpec.Function{
 		Id:      id.Generate(),
-		Name:    "basicFunc",
+		Name:    "basic",
 		Type:    "http",
 		Memory:  10000,
 		Timeout: 100000000,
 		Method:  "GET",
 		Source:  ".",
-		Call:    "basic",
+		Call:    "tou32",
 		Paths:   []string{"/ping"},
 		Domains: []string{"somDomain"},
 	}

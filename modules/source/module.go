@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/taubyte/go-interfaces/vm"
-	"github.com/taubyte/vm/utils/wasm"
-	"github.com/taubyte/vm/utils/wasm/binary"
+	wasm "github.com/taubyte/vm-wasm-utils"
+	"github.com/taubyte/vm-wasm-utils/binary"
 )
 
 type module struct {

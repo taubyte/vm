@@ -47,7 +47,9 @@ func (f *funcInstance) golangToWasm(args []interface{}) ([]uint64, error) {
 	for i, arg := range args {
 		_arg := reflect.ValueOf(arg)
 		switch _arg.Kind() {
-		case reflect.Float64, reflect.Float32:
+		case reflect.Float32:
+			wasm_args[i] = uint64(math.Float32bits(float32(_arg.Float())))
+		case reflect.Float64:
 			wasm_args[i] = math.Float64bits(_arg.Float())
 		case reflect.Uint, reflect.Uint32, reflect.Uint64:
 			wasm_args[i] = _arg.Uint()

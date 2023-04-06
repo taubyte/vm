@@ -1,7 +1,7 @@
 package loader_test
 
 import (
-	"fmt"
+	"bytes"
 	"io"
 	"testing"
 
@@ -15,7 +15,7 @@ import (
 func TestLoader(t *testing.T) {
 	test.ResetVars()
 
-	cid, loader, resolver, _, simple, err := test.Loader()
+	cid, loader, resolver, _, simple, err := test.Loader(bytes.NewReader(fixtures.Recursive))
 	assert.NilError(t, err)
 
 	ctx, err := test.Context()
@@ -41,8 +41,6 @@ func TestLoader(t *testing.T) {
 	if _, err = loader.Load(ctx, moduleName); err == nil {
 		t.Error("expected error")
 	}
-
-	fmt.Println(err)
 
 	// New Loader with no backends
 	loader = loaders.New(resolver)

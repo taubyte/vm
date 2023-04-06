@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
-	"github.com/taubyte/vm/utils/wasm"
+	wasm "github.com/taubyte/vm-wasm-utils"
 	"github.com/tetratelabs/wazero"
 	"github.com/tetratelabs/wazero/api"
 )
