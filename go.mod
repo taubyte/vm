@@ -23,6 +23,8 @@ replace github.com/taubyte/go-specs => ../../Repos/go-specs
 
 replace github.com/taubyte/go-interfaces v0.0.1-test => ../go-interfaces
 
+replace github.com/taubyte/vm-wasm-utils => ../../Repos/vm-wasm-utils
+
 require (
 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
@@ -108,6 +110,7 @@ require (
 	github.com/quic-go/quic-go v0.33.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/taubyte/domain-validation v1.0.0 // indirect
+	github.com/taubyte/vm-wasm-utils v0.0.0-20230406151949-5651d391250f
 	github.com/whyrusleeping/cbor-gen v0.0.0-20230126041949-52956bd4c9aa // indirect
 	go.opentelemetry.io/otel v1.14.0 // indirect
 	go.opentelemetry.io/otel/trace v1.14.0 // indirect
