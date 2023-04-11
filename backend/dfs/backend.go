@@ -7,25 +7,11 @@ import (
 	"io"
 	"net/url"
 	"strings"
-	"time"
 
 	peer "github.com/taubyte/go-interfaces/p2p/peer"
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/vm/backend/i18n"
 )
-
-var (
-	Scheme     = "dfs"
-	GetTimeout = 3 * time.Second
-)
-
-type backend struct {
-	ctx  context.Context
-	ctxC context.CancelFunc
-	node peer.Node
-}
-
-var _ vm.Backend = &backend{}
 
 func New(node peer.Node) vm.Backend {
 	b := &backend{
@@ -34,27 +20,6 @@ func New(node peer.Node) vm.Backend {
 
 	b.ctx, b.ctxC = context.WithCancel(node.Context())
 	return b
-}
-
-type zWasmReadCloser struct {
-	dag        io.ReadCloser
-	unCompress io.ReadCloser
-}
-
-func (zw *zWasmReadCloser) Close() error {
-	err := zw.unCompress.Close()
-	if err != nil {
-		return fmt.Errorf("closing uncompressed file failed with: %s", err)
-	}
-	err = zw.dag.Close()
-	if err != nil {
-		return fmt.Errorf("closing compressed file failed with: %s", err)
-	}
-	return nil
-}
-
-func (zw *zWasmReadCloser) Read(p []byte) (n int, err error) {
-	return zw.unCompress.Read(p)
 }
 
 func (b *backend) Get(uri string) (io.ReadCloser, error) {
