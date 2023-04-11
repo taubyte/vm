@@ -3,13 +3,13 @@ package service
 import (
 	"context"
 
-	wazero "github.com/taubyte/go-interfaces/vm/wazero"
+	"github.com/taubyte/go-interfaces/vm"
 	"github.com/tetratelabs/wazero/api"
 )
 
 /******************************** wazero.Module <> api.Module ****************************************/
 
-var _ wazero.Module = &callContext{}
+var _ vm.Module = &callContext{}
 
 type callContext struct {
 	wazero api.Module
@@ -27,19 +27,19 @@ func (c *callContext) CloseWithExitCode(exitCode uint32) error {
 	return c.wazero.CloseWithExitCode(context.TODO(), exitCode)
 }
 
-func (c *callContext) Memory() wazero.Memory {
+func (c *callContext) Memory() vm.Memory {
 	return &memory{wazero: c.wazero.Memory()}
 }
 
-func (c *callContext) ExportedFunction(name string) wazero.Function {
+func (c *callContext) ExportedFunction(name string) vm.Function {
 	return &importedFn{wazero: c.wazero.ExportedFunction(name)}
 }
 
-func (c *callContext) ExportedMemory(name string) wazero.Memory {
+func (c *callContext) ExportedMemory(name string) vm.Memory {
 	return &memory{wazero: c.wazero.ExportedMemory(name)}
 }
 
-func (c *callContext) ExportedGlobal(name string) wazero.Global {
+func (c *callContext) ExportedGlobal(name string) vm.Global {
 	return &global{wazero: c.wazero.ExportedGlobal(name)}
 }
 
@@ -129,7 +129,7 @@ type importedFn struct {
 	wazero api.Function
 }
 
-func (f *importedFn) Definition() wazero.FunctionDefinition {
+func (f *importedFn) Definition() vm.FunctionDefinition {
 	return &importedFnDef{f.wazero.Definition()}
 }
 
@@ -165,22 +165,22 @@ func (f *importedFnDef) DebugName() string {
 	return f.wazero.DebugName()
 }
 
-func (f *importedFnDef) ParamTypes() []wazero.ValueType {
+func (f *importedFnDef) ParamTypes() []vm.ValueType {
 	_vt := f.wazero.ParamTypes()
 	count := len(_vt)
-	vt := make([]wazero.ValueType, count)
+	vt := make([]vm.ValueType, count)
 	for i := 0; i < count; i++ {
-		vt[i] = wazero.ValueType(_vt[i])
+		vt[i] = vm.ValueType(_vt[i])
 	}
 	return vt
 }
 
-func (f *importedFnDef) ResultTypes() []wazero.ValueType {
+func (f *importedFnDef) ResultTypes() []vm.ValueType {
 	_vt := f.wazero.ResultTypes()
 	count := len(_vt)
-	vt := make([]wazero.ValueType, count)
+	vt := make([]vm.ValueType, count)
 	for i := 0; i < count; i++ {
-		vt[i] = wazero.ValueType(_vt[i])
+		vt[i] = vm.ValueType(_vt[i])
 	}
 	return vt
 }
@@ -194,8 +194,8 @@ type global struct {
 	wazero api.Global
 }
 
-func (g *global) Type() wazero.ValueType {
-	return wazero.ValueType(g.wazero.Type())
+func (g *global) Type() vm.ValueType {
+	return vm.ValueType(g.wazero.Type())
 }
 
 func (g *global) Get() uint64 {

@@ -5,12 +5,11 @@ import (
 	"reflect"
 
 	"github.com/taubyte/go-interfaces/vm"
-	wazero "github.com/taubyte/go-interfaces/vm/wazero"
-	wasm "github.com/tetratelabs/wazero/api"
+	api "github.com/tetratelabs/wazero/api"
 )
 
-var moduleType = reflect.TypeOf((*wazero.Module)(nil)).Elem()
-var wazeroModuleType = reflect.TypeOf((*wasm.Module)(nil)).Elem()
+var moduleType = reflect.TypeOf((*vm.Module)(nil)).Elem()
+var wazeroModuleType = reflect.TypeOf((*api.Module)(nil)).Elem()
 
 func (hm *hostModule) Function(def *vm.HostModuleFunctionDefinition) error {
 	if def != nil {
@@ -44,7 +43,7 @@ func (hm *hostModule) Function(def *vm.HostModuleFunctionDefinition) error {
 
 				for i := 0; i < 2; i++ {
 					if len(args) > i && args[i].Kind() == reflect.Interface && args[i].Type().Implements(wazeroModuleType) {
-						args[i] = reflect.ValueOf(&callContext{wazero: args[i].Interface().(wasm.Module)})
+						args[i] = reflect.ValueOf(&callContext{wazero: args[i].Interface().(api.Module)})
 					}
 				}
 
