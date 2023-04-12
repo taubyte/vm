@@ -38,7 +38,7 @@ type memoryPages struct {
 type hostModule struct {
 	ctx       vm.Context
 	name      string
-	parent    *runtime
+	runtime   *runtime
 	functions map[string]functionDef
 	memories  map[string]memoryPages
 	globals   map[string]interface{}
@@ -55,10 +55,11 @@ type instance struct {
 	outputErr  *bytes.Buffer
 	compileMap map[string]wazero.CompiledModule
 	deps       map[string]vm.SourceModule
+
+	runtime *runtime
 }
 
 /*************** Module Instance ***************/
-
 type moduleInstance struct {
 	module api.Module
 	ctx    context.Context
@@ -67,13 +68,13 @@ type moduleInstance struct {
 /*************** Runtime ***************/
 
 type runtime struct {
-	instance       *instance
-	runtime        wazero.Runtime
-	ctx            context.Context
-	ctxC           context.CancelFunc
+	primitive      wazero.Runtime
 	wasiStartError error
 	wasiStartDone  chan bool
 	lock           sync.RWMutex
+
+	ctx  context.Context
+	ctxC context.CancelFunc
 }
 
 /*************** Service ***************/

@@ -40,7 +40,7 @@ func newService() (vm.Context, vm.Service, error) {
 	return ctx, New(ctx.Context(), source), nil
 }
 
-func newInstance() (vm.Instance, error) {
+func newBasicInstance() (vm.Instance, error) {
 	ctx, service, err := newService()
 	if err != nil {
 		return nil, err
@@ -49,22 +49,32 @@ func newInstance() (vm.Instance, error) {
 	return service.New(ctx)
 }
 
-func newRuntime() (vm.Runtime, error) {
-	instance, err := newInstance()
+func newLoadedInstance() (vm.Instance, error) {
+	instance, err := newBasicInstance()
 	if err != nil {
 		return nil, err
 	}
 
-	return instance.Runtime(testFunc)
+	if err := instance.Load(
+		&vm.HostModuleDefinitions{
+			Functions: []*vm.HostModuleFunctionDefinition{testFunc},
+			Memories:  []*vm.HostModuleMemoryDefinition{mockMemoryDef},
+			Globals:   []*vm.HostModuleGlobalDefinition{mockGlobalDef},
+		}); err != nil {
+		return nil, err
+	}
+
+	return instance, err
 }
 
 func newModuleInstance() (vm.ModuleInstance, error) {
-	runtime, err := newRuntime()
+	instance, err := newLoadedInstance()
 	if err != nil {
 		return nil, err
 	}
 
-	return runtime.Module(functionSpec.ModuleName(test.TestFunc.Name))
+	return instance.Module(functionSpec.ModuleName(test.TestFunc.Name))
+
 }
 
 func newFuncs(functionNames []string) (map[string]vm.FunctionInstance, error) {

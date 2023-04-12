@@ -8,10 +8,12 @@ import (
 	api "github.com/tetratelabs/wazero/api"
 )
 
+var _ vm.HostModule = &hostModule{}
+
 var moduleType = reflect.TypeOf((*vm.Module)(nil)).Elem()
 var wazeroModuleType = reflect.TypeOf((*api.Module)(nil)).Elem()
 
-func (hm *hostModule) Function(def *vm.HostModuleFunctionDefinition) error {
+func (hm *hostModule) function(def *vm.HostModuleFunctionDefinition) error {
 	if def != nil {
 		if _, exists := hm.functions[def.Name]; exists {
 			return fmt.Errorf("function `%s` @ `%s` already defined", def.Name, hm.name)
@@ -58,17 +60,16 @@ func (hm *hostModule) Function(def *vm.HostModuleFunctionDefinition) error {
 	return nil
 }
 
-func (hm *hostModule) Functions(defs []*vm.HostModuleFunctionDefinition) error {
-	for _, fdef := range defs {
-		err := hm.Function(fdef)
-		if err != nil {
+func (hm *hostModule) Functions(defs ...*vm.HostModuleFunctionDefinition) error {
+	for _, def := range defs {
+		if err := hm.function(def); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (hm *hostModule) Memory(def *vm.HostModuleMemoryDefinition) error {
+func (hm *hostModule) memory(def *vm.HostModuleMemoryDefinition) error {
 	if def != nil {
 		if _, exists := hm.memories[def.Name]; exists {
 			return fmt.Errorf("memory `%s` @ `%s` already defined", def.Name, hm.name)
@@ -84,7 +85,17 @@ func (hm *hostModule) Memory(def *vm.HostModuleMemoryDefinition) error {
 	return nil
 }
 
-func (hm *hostModule) Global(def *vm.HostModuleGlobalDefinition) error {
+func (hm *hostModule) Memories(defs ...*vm.HostModuleMemoryDefinition) error {
+	for _, def := range defs {
+		if err := hm.memory(def); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (hm *hostModule) global(def *vm.HostModuleGlobalDefinition) error {
 	if def != nil {
 		if _, exists := hm.globals[def.Name]; exists {
 			return fmt.Errorf("global `%s` @ `%s` already defined", def.Name, hm.name)
@@ -96,10 +107,9 @@ func (hm *hostModule) Global(def *vm.HostModuleGlobalDefinition) error {
 	return nil
 }
 
-func (hm *hostModule) Globals(defs []*vm.HostModuleGlobalDefinition) error {
-	for _, gdef := range defs {
-		err := hm.Global(gdef)
-		if err != nil {
+func (hm *hostModule) Globals(defs ...*vm.HostModuleGlobalDefinition) error {
+	for _, def := range defs {
+		if err := hm.global(def); err != nil {
 			return err
 		}
 	}
@@ -108,19 +118,18 @@ func (hm *hostModule) Globals(defs []*vm.HostModuleGlobalDefinition) error {
 }
 
 func (hm *hostModule) Compile() (vm.ModuleInstance, error) {
-	wb := hm.parent.runtime.NewHostModuleBuilder(hm.name)
+	wb := hm.runtime.primitive.NewHostModuleBuilder(hm.name)
 	// Export functions after translation if needed
 	for name, def := range hm.functions {
 		wb.NewFunctionBuilder().WithFunc(def.handler).Export(name)
 	}
 
-	cm, err := wb.Instantiate(hm.ctx.Context())
-	if err != nil {
+	if cm, err := wb.Instantiate(hm.ctx.Context()); err != nil {
 		return nil, err
+	} else {
+		return &moduleInstance{
+			module: cm,
+			ctx:    hm.ctx.Context(),
+		}, nil
 	}
-
-	return &moduleInstance{
-		module: cm,
-		ctx:    hm.ctx.Context(),
-	}, nil
 }
