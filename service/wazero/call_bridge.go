@@ -43,10 +43,6 @@ func (c *callContext) ExportedGlobal(name string) vm.Global {
 	return &global{wazero: c.wazero.ExportedGlobal(name)}
 }
 
-func (c *callContext) String() string {
-	return c.wazero.String()
-}
-
 /******************************** wazero.Memory <> api.Memory ****************************************/
 type memory struct {
 	wazero api.Memory
@@ -141,28 +137,8 @@ type importedFnDef struct {
 	wazero api.FunctionDefinition
 }
 
-func (f *importedFnDef) ModuleName() string {
-	return f.wazero.ModuleName()
-}
-
-func (f *importedFnDef) Index() uint32 {
-	return f.wazero.Index()
-}
-
 func (f *importedFnDef) Name() string {
 	return f.wazero.Name()
-}
-
-func (f *importedFnDef) Import() (string, string, bool) {
-	return f.wazero.Import()
-}
-
-func (f *importedFnDef) ExportNames() []string {
-	return f.wazero.ExportNames()
-}
-
-func (f *importedFnDef) DebugName() string {
-	return f.wazero.DebugName()
 }
 
 func (f *importedFnDef) ParamTypes() []vm.ValueType {
