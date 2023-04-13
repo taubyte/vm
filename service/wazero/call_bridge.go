@@ -7,7 +7,7 @@ import (
 	"github.com/tetratelabs/wazero/api"
 )
 
-/******************************** wazero.Module <> api.Module ****************************************/
+/******************************** Module <> wazero/api.Module ****************************************/
 
 var _ vm.Module = &callContext{}
 
@@ -43,7 +43,7 @@ func (c *callContext) ExportedGlobal(name string) vm.Global {
 	return &global{wazero: c.wazero.ExportedGlobal(name)}
 }
 
-/******************************** wazero.Memory <> api.Memory ****************************************/
+/******************************** Memory <> wazero/api.Memory ****************************************/
 type memory struct {
 	wazero api.Memory
 }
@@ -120,7 +120,7 @@ func (m *memory) Write(offset uint32, v []byte) bool {
 	return m.wazero.Write(offset, v)
 }
 
-/******************************** wazero.Function <> api.Function ****************************************/
+/******************************** Function <> wazero/api.Function ****************************************/
 type importedFn struct {
 	wazero api.Function
 }
@@ -165,7 +165,7 @@ func (f *importedFnDef) ParamNames() []string {
 	return f.wazero.ParamNames()
 }
 
-/******************************** wazero.Global <> api.Global ****************************************/
+/******************************** Global <> wazero/api.Global ****************************************/
 type global struct {
 	wazero api.Global
 }

@@ -501,8 +501,14 @@ github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ
 github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07/go.mod h1:kDXzergiv9cbyO7IOYJZWg1U88JhDg3PB6klq9Hg2pA=
 github.com/taubyte/domain-validation v1.0.0 h1:yUt6y7b/3PC9aocvl7s8cBKG4ieN35zQqVQIywGUg4o=
 github.com/taubyte/domain-validation v1.0.0/go.mod h1:/X3yd7sBjnE323rA8I9PiUt5+NlKU4I02nQik25Vqe8=
+github.com/taubyte/go-interfaces v0.0.1 h1:pzuoMQr/tnmqqT5hDupOlCRStIWNF+O5RHdbbb5Rr8g=
+github.com/taubyte/go-interfaces v0.0.1/go.mod h1:Ci55DKj5wl81yHZNPjD/lA96cqng9U9iq9XL6JDz23o=
+github.com/taubyte/go-specs v0.10.0 h1:P4wf8U51Rn7GhL9KXQSfHoruXJ3TedV0xIflGjWccPU=
+github.com/taubyte/go-specs v0.10.0/go.mod h1:OLj64wgg6hEf/xa5v/yWFPNoNQSK2Pf99e6KnEMW2ZI=
 github.com/taubyte/utils v0.1.5 h1:d/LwXeCzg332GoUac8UeJF7b/iFiMffz+aRvdQltkZ8=
 github.com/taubyte/utils v0.1.5/go.mod h1:VEJQ8P46niWs80GwzDMCbzCVpr2qISQCtP8cOdckmP4=
+github.com/taubyte/vm-wasm-utils v1.0.0 h1:1WtAZomZDoM7xSqyWtcNUfqcWMI8JnblRp5V5FMFhsA=
+github.com/taubyte/vm-wasm-utils v1.0.0/go.mod h1:Un68bD3KZzh7aUdH7oSx/ECtHYMjU1JmWRC+QfoM1Sk=
 github.com/tetratelabs/wazero v1.0.0-rc.1.0.20230314055619-ced301183757 h1:bTvKkm+OWD9rU9omz7aZAc5FoKmLfjTcNkEDJnVZTyU=
 github.com/tetratelabs/wazero v1.0.0-rc.1.0.20230314055619-ced301183757/go.mod h1:wYx2gNRg8/WihJfSDxA1TIL8H+GkfLYm+bIfbblu9VQ=
 github.com/urfave/cli v1.22.10/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=

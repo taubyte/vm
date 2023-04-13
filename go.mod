@@ -2,29 +2,25 @@ module github.com/taubyte/vm
 
 go 1.19
 
+// Taubyte Direct Imports
+require (
+	github.com/taubyte/go-interfaces v0.0.1
+	github.com/taubyte/go-specs v0.10.0
+	github.com/taubyte/utils v0.1.5
+	github.com/taubyte/vm-wasm-utils v1.0.0
+)
+
+// Direct Imports
 require (
 	github.com/spf13/afero v1.9.5
-	github.com/taubyte/go-interfaces v0.0.1-test
-	github.com/taubyte/go-specs v0.9.6
 	github.com/tetratelabs/wazero v1.0.0-rc.1.0.20230314055619-ced301183757
 	gotest.tools/v3 v3.4.0
 )
 
-require (
-	github.com/google/go-cmp v0.5.9 // indirect
-	github.com/ipfs/go-cid v0.4.0 // indirect
-	github.com/ipfs/go-datastore v0.6.0 // indirect
-	github.com/libp2p/go-libp2p-core v0.20.1 // indirect
-	github.com/libp2p/go-libp2p-pubsub v0.9.3 // indirect
-	github.com/taubyte/utils v0.1.5
-)
+// Taubyte Indirect Imports
+require github.com/taubyte/domain-validation v1.0.0 // indirect
 
-replace github.com/taubyte/go-specs => ../../Repos/go-specs
-
-replace github.com/taubyte/go-interfaces v0.0.1-test => ../go-interfaces
-
-replace github.com/taubyte/vm-wasm-utils => ../../Repos/vm-wasm-utils
-
+// Indirect Imports
 require (
 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
@@ -40,6 +36,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/pprof v0.0.0-20230309165930-d61513b1440d // indirect
 	github.com/google/uuid v1.3.0 // indirect
@@ -51,6 +48,8 @@ require (
 	github.com/ipfs/go-bitfield v1.1.0 // indirect
 	github.com/ipfs/go-block-format v0.1.1 // indirect
 	github.com/ipfs/go-blockservice v0.5.0 // indirect
+	github.com/ipfs/go-cid v0.4.0 // indirect
+	github.com/ipfs/go-datastore v0.6.0 // indirect
 	github.com/ipfs/go-ipfs-blockstore v1.3.0 // indirect
 	github.com/ipfs/go-ipfs-ds-help v1.1.0 // indirect
 	github.com/ipfs/go-ipfs-exchange-interface v0.2.0 // indirect
@@ -79,6 +78,8 @@ require (
 	github.com/libp2p/go-flow-metrics v0.1.0 // indirect
 	github.com/libp2p/go-libp2p v0.26.4 // indirect
 	github.com/libp2p/go-libp2p-asn-util v0.3.0 // indirect
+	github.com/libp2p/go-libp2p-core v0.20.1 // indirect
+	github.com/libp2p/go-libp2p-pubsub v0.9.3 // indirect
 	github.com/libp2p/go-msgio v0.3.0 // indirect
 	github.com/libp2p/go-nat v0.1.0 // indirect
 	github.com/libp2p/go-netroute v0.2.1 // indirect
@@ -109,8 +110,6 @@ require (
 	github.com/quic-go/qtls-go1-20 v0.1.1 // indirect
 	github.com/quic-go/quic-go v0.33.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/taubyte/domain-validation v1.0.0 // indirect
-	github.com/taubyte/vm-wasm-utils v0.0.0-20230406151949-5651d391250f
 	github.com/whyrusleeping/cbor-gen v0.0.0-20230126041949-52956bd4c9aa // indirect
 	go.opentelemetry.io/otel v1.14.0 // indirect
 	go.opentelemetry.io/otel/trace v1.14.0 // indirect
@@ -130,4 +129,5 @@ require (
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	lukechampine.com/blake3 v1.1.7 // indirect
+
 )
