@@ -10,6 +10,8 @@ require (
 	github.com/taubyte/vm-wasm-utils v1.0.0
 )
 
+replace github.com/taubyte/vm-wasm-utils => ../../Repos/vm-wasm-utils
+
 // Direct Imports
 require (
 	github.com/spf13/afero v1.9.5
