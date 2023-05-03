@@ -9,7 +9,7 @@ import (
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/vm/backend/dfs"
 	"github.com/taubyte/vm/backend/fs"
-	"github.com/taubyte/vm/backend/http"
+	"github.com/taubyte/vm/backend/url"
 
 	peer "github.com/taubyte/go-interfaces/p2p/peer/mocks"
 )
@@ -40,7 +40,7 @@ func (t *testBackend) Inject(r io.Reader) (*testBackend, error) {
 }
 
 func HTTPBackend() vm.Backend {
-	return http.New(*goHttp.DefaultClient)
+	return url.New(*goHttp.DefaultClient)
 }
 
 func AllBackends(injectReader io.Reader) (cid string, simpleNode peer.MockedNode, backends []vm.Backend, err error) {

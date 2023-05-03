@@ -27,22 +27,37 @@ func New(client tns.Client) vm.Resolver {
 }
 
 func (s *resolver) Lookup(ctx vm.Context, name string) (string, error) {
-	splitModule := strings.Split(name, "/")
-	if len(splitModule) < 2 {
-		return "", fmt.Errorf("name should follow convention <moduleType>/<moduleName> got: `%s`", name)
+	splitAddress := strings.Split(name, "/")
+	if len(splitAddress) < 2 {
+		return "", fmt.Errorf("invalid name `%s`", name)
 	}
 
-	moduleType, moduleName := splitModule[0], strings.Join(splitModule[1:], "/")
+	// Local module relative to project
+	if !strings.HasPrefix(name, "/") {
+		if len(splitAddress) != 2 {
+			return "", fmt.Errorf("invalid local module name got `%s` expected `<module-type>/<module-name>`", name)
+		}
 
-	switch moduleType {
-	case functionSpec.PathVariable.String(), smartOpSpec.PathVariable.String(), librarySpec.PathVariable.String():
-		return internalDFSPath(ctx, s.tns, moduleType, moduleName)
-	case "http":
-		return moduleName, nil
+		moduleType, moduleName := splitAddress[0], splitAddress[1]
+		switch moduleType {
+		case functionSpec.PathVariable.String(), smartOpSpec.PathVariable.String(), librarySpec.PathVariable.String():
+			return internalDFSPath(ctx, s.tns, moduleType, moduleName)
+		default:
+			return "", fmt.Errorf("unknown local module type: `%s`", moduleType)
+		}
+	}
+
+	addressType, address := splitAddress[1], strings.Join(splitAddress[2:], "/")
+
+	switch addressType {
+	case "url":
+		return address, nil
+	case "dfs":
+		return fmt.Sprintf("dfs:///%s", address), nil
 	case "fs":
-		return fmt.Sprintf("fs:///%s", fs.Encode(moduleName)), nil
+		return fmt.Sprintf("fs:///%s", fs.Encode(address)), nil
 	default:
-		return "", fmt.Errorf("unknown module type `%s`", moduleType)
+		return "", fmt.Errorf("unknown mutli-address type: `%s`", addressType)
 	}
 
 }
