@@ -37,12 +37,12 @@ func basicLookUp(t *testing.T, global bool, module, expectedUri string) (mocks.M
 
 func TestResolverHTTP(t *testing.T) {
 	test_utils.ResetVars()
-	basicLookUp(t, false, "/http/"+test_utils.TestEndPoint, test_utils.TestEndPoint)
+	basicLookUp(t, false, "/url/"+test_utils.TestEndPoint, test_utils.TestEndPoint)
 }
 
 func TestResolverFS(t *testing.T) {
 	test_utils.ResetVars()
-	basicLookUp(t, false, "/fs/"+test_utils.Wd, "fs:///"+fs.Encode(test_utils.Wd))
+	basicLookUp(t, false, "/fs/"+test_utils.Wd, "fs://"+fs.Encode(test_utils.Wd))
 }
 
 func TestResolverProjectDFS(t *testing.T) {

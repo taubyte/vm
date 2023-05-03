@@ -33,7 +33,7 @@ func (s *resolver) Lookup(ctx vm.Context, name string) (string, error) {
 	}
 
 	// Local module relative to project
-	if !strings.HasPrefix(name, "/") {
+	if len(splitAddress[0]) > 1 {
 		if len(splitAddress) != 2 {
 			return "", fmt.Errorf("invalid local module name got `%s` expected `<module-type>/<module-name>`", name)
 		}
