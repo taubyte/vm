@@ -34,8 +34,6 @@ func TestBackEnd(t *testing.T) {
 		}
 	}
 
-	// /dfs:///
-
 	dagReader, err := backend.Get("dfs:///" + backend.Cid)
 	assert.NilError(t, err)
 
