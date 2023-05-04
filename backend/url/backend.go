@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"io"
 	"net/http"
-	"net/url"
 
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/vm/backend/i18n"
 )
@@ -14,28 +14,21 @@ type backend struct {
 	http http.Client
 }
 
-var (
-	Scheme = "http"
-)
-
 func New(client http.Client) vm.Backend {
 	return &backend{
 		http: client,
 	}
 }
 
-func (b *backend) Close() error {
-	return nil
-}
-
-func (b *backend) Get(uri string) (io.ReadCloser, error) {
-	_uri, err := url.Parse(uri)
+func (b *backend) Get(multiAddr ma.Multiaddr) (io.ReadCloser, error) {
+	protocols, err := isMADns(multiAddr)
 	if err != nil {
-		return nil, i18n.ParseError(uri, err)
+		return nil, err
 	}
 
-	if _uri.Scheme != Scheme && _uri.Scheme != Scheme+"s" {
-		return nil, i18n.SchemeError(_uri, b)
+	uri, err := maUriFormat(multiAddr, protocols)
+	if err != nil {
+		return nil, err
 	}
 
 	res, err := b.http.Get(uri)
@@ -53,5 +46,9 @@ func (b *backend) Get(uri string) (io.ReadCloser, error) {
 }
 
 func (b *backend) Scheme() string {
-	return Scheme
+	return "url"
+}
+
+func (b *backend) Close() error {
+	return nil
 }

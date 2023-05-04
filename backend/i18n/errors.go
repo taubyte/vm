@@ -2,19 +2,19 @@ package i18n
 
 import (
 	"fmt"
-	"net/url"
 
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/taubyte/go-interfaces/vm"
 )
 
-func ParseError(uri string, err error) error {
-	return fmt.Errorf("parsing uri(`%s`) failed with: %s", uri, err)
-}
-
-func SchemeError(uri *url.URL, backend vm.Backend) error {
-	return fmt.Errorf("unsupported Scheme `%s` in `%s` expected `%s`", uri.Scheme, uri.String(), backend.Scheme())
-}
-
 func RetrieveError(path string, err error, backend vm.Backend) error {
 	return fmt.Errorf("retrieving ReadCloser through `%s` backend from `%s` failed with: %s", backend.Scheme(), path, err)
+}
+
+func MultiAddrCompliant(multiAddr ma.Multiaddr, protocol string) error {
+	return fmt.Errorf("multi address `%s` is not %s compliant ", multiAddr.String(), protocol)
+}
+
+func ParseProtocol(protocol string, err error) error {
+	return fmt.Errorf("parsing %s failed with: %s", protocol, err)
 }
