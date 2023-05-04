@@ -4,13 +4,11 @@ go 1.19
 
 // Taubyte Direct Imports
 require (
-	github.com/taubyte/go-interfaces v0.1.0
+	github.com/taubyte/go-interfaces v0.1.1
 	github.com/taubyte/go-specs v0.10.0
 	github.com/taubyte/utils v0.1.5
 	github.com/taubyte/vm-wasm-utils v1.0.1
 )
-
-replace github.com/taubyte/go-interfaces => ../../github/go-interfaces
 
 // Direct Imports
 require (
