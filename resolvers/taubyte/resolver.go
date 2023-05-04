@@ -1,9 +1,11 @@
 package resolver
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/taubyte/go-interfaces/services/tns"
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/go-specs/extract"
@@ -11,7 +13,6 @@ import (
 	librarySpec "github.com/taubyte/go-specs/library"
 	"github.com/taubyte/go-specs/methods"
 	smartOpSpec "github.com/taubyte/go-specs/smartops"
-	"github.com/taubyte/vm/backend/fs"
 )
 
 type resolver struct {
@@ -26,83 +27,112 @@ func New(client tns.Client) vm.Resolver {
 	}
 }
 
-func (s *resolver) Lookup(ctx vm.Context, name string) (string, error) {
-	splitModule := strings.Split(name, "/")
-	if len(splitModule) < 2 {
-		return "", fmt.Errorf("name should follow convention <moduleType>/<moduleName> got: `%s`", name)
+func (s *resolver) Lookup(ctx vm.Context, name string) (ma.Multiaddr, error) {
+	splitAddress := strings.Split(name, "/")
+	splitAddressLen := len(splitAddress)
+	if splitAddressLen < 2 {
+		return nil, fmt.Errorf("invalid module name format `%s`", name)
 	}
 
-	moduleType, moduleName := splitModule[0], strings.Join(splitModule[1:], "/")
-
+	moduleType := splitAddress[0]
 	switch moduleType {
-	case functionSpec.PathVariable.String(), smartOpSpec.PathVariable.String(), librarySpec.PathVariable.String():
-		return internalDFSPath(ctx, s.tns, moduleType, moduleName)
-	case "http":
-		return moduleName, nil
-	case "fs":
-		return fmt.Sprintf("fs:///%s", fs.Encode(moduleName)), nil
-	default:
-		return "", fmt.Errorf("unknown module type `%s`", moduleType)
-	}
+	case "": // Multi-Address
+		multiAddr, err := ma.NewMultiaddr(name)
+		if err != nil {
+			return nil, fmt.Errorf("parsing multi-address `%s` failed with: %s", name, err)
+		}
 
+		return multiAddr, nil
+	default: // Local to project
+		switch moduleType {
+		case functionSpec.PathVariable.String(), smartOpSpec.PathVariable.String(), librarySpec.PathVariable.String(): // supported module types
+			if splitAddressLen != 2 {
+				return nil, fmt.Errorf(
+					"invalid local module name got `%s` expected <%s|%s|%s>/<name>",
+					name,
+					functionSpec.PathVariable.String(),
+					smartOpSpec.PathVariable.String(),
+					librarySpec.PathVariable.String(),
+				)
+			}
+			return projectRelativeToCid(ctx, s.tns, moduleType, splitAddress[1])
+		default:
+			return nil, fmt.Errorf("invalid moduleType `%s`", moduleType)
+		}
+	}
 }
 
-func internalDFSPath(ctx vm.Context, tns tns.Client, moduleType string, moduleName string) (string, error) {
-	module := moduleType + "/" + moduleName
+func projectRelativeToCid(ctx vm.Context, tns tns.Client, moduleType string, moduleName string) (ma.Multiaddr, error) {
 	project := ctx.Project()
 	application := ctx.Application()
-	wasmModulePath, err := methods.WasmModulePathFromModule(ctx.Project(), ctx.Application(), moduleType, moduleName)
+	branch := ctx.Branch()
+
+	// Get current commit index with function context Application
+	currentPaths, err := currentWasmModule(tns, moduleType, moduleName, project, application, branch)
 	if err != nil {
-		return "", fmt.Errorf("creating path for module `%s` with app: `%s` in project `%s` failed with: %s", module, application, project, err)
+		if len(application) < 1 {
+			return nil, err
+		}
+
+		// If no current commit index found, with a non empty application try global
+		currentPaths, err = currentWasmModule(tns, moduleType, moduleName, project, "", branch)
+		if err != nil {
+			return nil, fmt.Errorf("looking up global and local modules failed with: %s", err)
+		}
+	}
+
+	assetCid, err := fetchCidFromCurrent(currentPaths, tns, project)
+	if err != nil {
+		return nil, fmt.Errorf("fetching cid for module `%s/%s` on project `%s` with application `%s` failed with: %s", moduleType, moduleName, project, application, err)
+	}
+
+	return ma.NewMultiaddr("/dfs/" + assetCid)
+}
+
+func currentWasmModule(tns tns.Client, moduleType, moduleName, project, application, branch string) ([]tns.Path, error) {
+	wasmModulePath, err := methods.WasmModulePathFromModule(project, application, moduleType, moduleName)
+	if err != nil {
+		return nil, err
 	}
 
 	wasmIndex, err := tns.Fetch(wasmModulePath)
 	if err != nil {
-		return "", fmt.Errorf("looking up module `%s` with app: `%s` in project `%s` failed with: %s", module, application, project, err)
+		return nil, fmt.Errorf("looking up module `%s/%s` with app: `%s` in project `%s` failed with: %s", moduleType, moduleName, application, project, err)
 	}
 
-	currentPath, err := wasmIndex.Current(ctx.Branch())
-	// Checks global if cannot find using the application
-	if err != nil || len(currentPath) == 0 && len(ctx.Application()) != 0 {
-		wasmModulePath, err := methods.WasmModulePathFromModule(project, "", moduleType, moduleName)
-		if err != nil {
-			return "", fmt.Errorf("creating global module path `%s` in project `%s` failed with: %s", module, project, err)
-		}
-
-		wasmIndex, err = tns.Fetch(wasmModulePath)
-		if err != nil {
-			return "", fmt.Errorf("looking up global module `%s` in project `%s` failed with: %s", module, project, err)
-		}
-
-		currentPath, err = wasmIndex.Current(ctx.Branch())
-		if err != nil {
-			return "", fmt.Errorf("looking up current commit for global module `%s`  in project `%s` failed with: %s", module, project, err)
-		}
+	currentPath, err := wasmIndex.Current(branch)
+	if err != nil {
+		return nil, fmt.Errorf("looking up current commit for module `%s/%s` with app: `%s` in project `%s` failed with: %s", moduleType, moduleName, application, project, err)
 	}
 
-	if len(currentPath) > 1 {
-		return "", fmt.Errorf("current module `%s`  in `%s` returned too many paths, theres an issue with the compiler", module, project)
+	return currentPath, nil
+}
+
+func fetchCidFromCurrent(currentPaths []tns.Path, tns tns.Client, project string) (string, error) {
+	// Current is expected to index one value in the slice
+	if len(currentPaths) > 1 {
+		return "", errors.New("current returned too many paths, theres an issue with the config compiler")
 	}
 
-	parser, err := extract.Tns().BasicPath(currentPath[0].String())
+	parser, err := extract.Tns().BasicPath(currentPaths[0].String())
 	if err != nil {
 		return "", err
 	}
 
 	assetHash, err := methods.GetTNSAssetPath(project, parser.Resource(), parser.Branch())
 	if err != nil {
-		return "", fmt.Errorf("creating asset hash for module `%s` in project `%s` failed with: %s", module, project, err)
+		return "", fmt.Errorf("getting asset hash failed with: %s", err)
 	}
 
 	_assetCid, err := tns.Fetch(assetHash)
 	if err != nil {
-		return "", fmt.Errorf("fetching asset for module `%s` in project `%s` failed with: %s", module, project, err)
+		return "", fmt.Errorf("fetching asset from hash `%s` failed with: %s", assetHash, err)
 	}
 
 	assetCid, ok := _assetCid.Interface().(string)
 	if !ok {
-		return "", fmt.Errorf("asset type `%T` unexpected for module `%s` in project `%s`", _assetCid.Interface(), module, project)
+		return "", fmt.Errorf("asset type `%T` unexpected", _assetCid.Interface())
 	}
 
-	return fmt.Sprintf("dfs:///%s", assetCid), nil
+	return assetCid, nil
 }

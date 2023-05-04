@@ -6,6 +6,7 @@ import (
 	"io"
 	"testing"
 
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/taubyte/vm/backend/dfs"
 	fixtures "github.com/taubyte/vm/fixtures/wasm"
 	"github.com/taubyte/vm/test_utils"
@@ -17,24 +18,10 @@ func TestBackEnd(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Equal(t, backend.Scheme(), dfs.Scheme)
 
-	incorrectUris := []string{
-		"dfs://" + backend.Cid,
-		"Dfs://" + backend.Cid,
-		"DFS://" + backend.Cid,
-		"dfs:///file/" + backend.Cid,
-		"dfs:///Fake" + backend.Cid,
-		"hello world" + backend.Cid,
-		// ASCII control character for coverage
-		string([]byte{0x7f}) + backend.Cid,
-	}
+	mAddr, err := ma.NewMultiaddr("/dfs/" + backend.Cid)
+	assert.NilError(t, err)
 
-	for _, uri := range incorrectUris {
-		if _, err = backend.Get(uri); err == nil {
-			t.Error("expected error")
-		}
-	}
-
-	dagReader, err := backend.Get("dfs:///" + backend.Cid)
+	dagReader, err := backend.Get(mAddr)
 	assert.NilError(t, err)
 
 	dfsData, err := io.ReadAll(dagReader)

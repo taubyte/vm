@@ -15,8 +15,10 @@ var (
 	MockGlobalConfig mocks.InjectConfig
 	ContextOptions   []context.Option
 
-	TestEndPoint = "https://ping.examples.tau.link/ping"
-	Wd           string
+	TestHost = "ping.examples.tau.link"
+	TestPath = "ping"
+
+	Wd string
 )
 
 func ResetVars() (err error) {

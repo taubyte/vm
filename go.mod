@@ -4,7 +4,7 @@ go 1.19
 
 // Taubyte Direct Imports
 require (
-	github.com/taubyte/go-interfaces v0.1.0
+	github.com/taubyte/go-interfaces v0.1.1
 	github.com/taubyte/go-specs v0.10.0
 	github.com/taubyte/utils v0.1.5
 	github.com/taubyte/vm-wasm-utils v1.0.1
@@ -12,6 +12,7 @@ require (
 
 // Direct Imports
 require (
+	github.com/ipfs/go-cid v0.4.1
 	github.com/spf13/afero v1.9.5
 	github.com/tetratelabs/wazero v1.0.0-rc.1.0.20230314055619-ced301183757
 	gotest.tools/v3 v3.4.0
@@ -49,7 +50,6 @@ require (
 	github.com/ipfs/go-bitfield v1.1.0 // indirect
 	github.com/ipfs/go-block-format v0.1.2 // indirect
 	github.com/ipfs/go-blockservice v0.5.0 // indirect
-	github.com/ipfs/go-cid v0.4.1 // indirect
 	github.com/ipfs/go-datastore v0.6.0 // indirect
 	github.com/ipfs/go-ipfs-blockstore v1.3.0 // indirect
 	github.com/ipfs/go-ipfs-ds-help v1.1.0 // indirect
@@ -93,7 +93,7 @@ require (
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/multiformats/go-base32 v0.1.0 // indirect
 	github.com/multiformats/go-base36 v0.2.0 // indirect
-	github.com/multiformats/go-multiaddr v0.9.0 // indirect
+	github.com/multiformats/go-multiaddr v0.9.0
 	github.com/multiformats/go-multiaddr-dns v0.3.1 // indirect
 	github.com/multiformats/go-multiaddr-fmt v0.1.0 // indirect
 	github.com/multiformats/go-multibase v0.2.0 // indirect
