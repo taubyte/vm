@@ -8,7 +8,7 @@ import (
 
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/vm/backend/dfs"
-	"github.com/taubyte/vm/backend/fs"
+	"github.com/taubyte/vm/backend/file"
 	"github.com/taubyte/vm/backend/url"
 
 	peer "github.com/taubyte/go-interfaces/p2p/peer/mocks"
@@ -51,5 +51,5 @@ func AllBackends(injectReader io.Reader) (cid string, simpleNode peer.MockedNode
 		}
 	}
 
-	return dfsBe.Cid, dfsBe.simple, []vm.Backend{HTTPBackend(), dfsBe, fs.New()}, nil
+	return dfsBe.Cid, dfsBe.simple, []vm.Backend{HTTPBackend(), dfsBe, file.New()}, nil
 }
