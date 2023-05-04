@@ -29,7 +29,7 @@ func (b *backend) Get(multiAddr ma.Multiaddr) (io.ReadCloser, error) {
 		return nil, errors.ParseProtocol(resolv.DFS_PROTOCOL_NAME, err)
 	}
 
-	ctx, ctxC := context.WithTimeout(context.Background(), vm.GetTimeout)
+	ctx, ctxC := context.WithTimeout(b.node.Context(), vm.GetTimeout)
 	dagReader, err := b.node.GetFile(ctx, cid)
 	ctxC()
 	if err != nil {
