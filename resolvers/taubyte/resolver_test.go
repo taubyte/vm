@@ -1,6 +1,7 @@
 package resolver_test
 
 import (
+	"fmt"
 	"testing"
 
 	gocontext "context"
@@ -9,26 +10,28 @@ import (
 	"github.com/taubyte/go-interfaces/vm"
 	functionSpec "github.com/taubyte/go-specs/function"
 	"github.com/taubyte/go-specs/methods"
-	"github.com/taubyte/vm/backend/fs"
+
+	// "github.com/taubyte/vm/backend/file"
 	"github.com/taubyte/vm/context"
 	"github.com/taubyte/vm/test_utils"
 
+	resolv "github.com/taubyte/vm/resolvers/taubyte"
 	"gotest.tools/v3/assert"
 )
 
-func basicLookUp(t *testing.T, global bool, module, expectedUri string) (mocks.MockedTns, vm.Resolver, vm.Context) {
+func basicLookUp(t *testing.T, global bool, mAddr, expectedUri string) (mocks.MockedTns, vm.Resolver, vm.Context) {
 	tns, resolver, err := test_utils.Resolver(global)
 	assert.NilError(t, err)
 
 	ctx, err := test_utils.Context()
 	assert.NilError(t, err)
 
-	if len(module) > 0 {
-		uri, err := resolver.Lookup(ctx, module)
+	if len(mAddr) > 0 {
+		uri, err := resolver.Lookup(ctx, mAddr)
 		assert.NilError(t, err)
 
 		if len(expectedUri) > 0 {
-			assert.Equal(t, uri, expectedUri)
+			assert.Equal(t, uri.String(), expectedUri)
 		}
 	}
 
@@ -37,28 +40,29 @@ func basicLookUp(t *testing.T, global bool, module, expectedUri string) (mocks.M
 
 func TestResolverHTTP(t *testing.T) {
 	test_utils.ResetVars()
-	basicLookUp(t, false, "/url/"+test_utils.TestEndPoint, test_utils.TestEndPoint)
+	mAddr := fmt.Sprintf("/dns4/%s/https/%s/%s", test_utils.TestHost, resolv.PATH_PROTOCOL_NAME, test_utils.TestPath)
+	basicLookUp(t, false, mAddr, mAddr)
 }
 
 func TestResolverFS(t *testing.T) {
 	test_utils.ResetVars()
-	basicLookUp(t, false, "/fs/"+test_utils.Wd, "fs://"+fs.Encode(test_utils.Wd))
+	basicLookUp(t, false, "/file/"+test_utils.Wd, "/file/"+test_utils.Wd)
 }
 
 func TestResolverProjectDFS(t *testing.T) {
 	test_utils.ResetVars()
-	basicLookUp(t, false, functionSpec.ModuleName(test_utils.TestFunc.Name), "dfs:///"+test_utils.MockConfig.Cid)
+	basicLookUp(t, false, functionSpec.ModuleName(test_utils.TestFunc.Name), "/dfs/"+test_utils.MockConfig.Cid)
 }
 
 func TestResolverDFS(t *testing.T) {
 	test_utils.ResetVars()
-	basicLookUp(t, false, "/dfs/"+test_utils.MockConfig.Cid, "dfs:///"+test_utils.MockConfig.Cid)
+	basicLookUp(t, false, "/dfs/"+test_utils.MockConfig.Cid, "/dfs/"+test_utils.MockConfig.Cid)
 }
 
 func TestResolverDFSGlobal(t *testing.T) {
 	moduleName := functionSpec.ModuleName(test_utils.TestFunc.Name)
 
-	tns, resolver, ctx := basicLookUp(t, true, moduleName, "dfs:///"+test_utils.MockConfig.Cid)
+	tns, resolver, ctx := basicLookUp(t, true, moduleName, "/dfs/"+test_utils.MockConfig.Cid)
 
 	// Test Failures
 	wasmPath, err := functionSpec.Tns().WasmModulePath(ctx.Project(), "", test_utils.TestFunc.Name)
