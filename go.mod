@@ -10,6 +10,8 @@ require (
 	github.com/taubyte/vm-wasm-utils v1.0.1
 )
 
+replace github.com/taubyte/go-interfaces => ../../github/go-interfaces
+
 // Direct Imports
 require (
 	github.com/spf13/afero v1.9.5
@@ -93,7 +95,7 @@ require (
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/multiformats/go-base32 v0.1.0 // indirect
 	github.com/multiformats/go-base36 v0.2.0 // indirect
-	github.com/multiformats/go-multiaddr v0.9.0 // indirect
+	github.com/multiformats/go-multiaddr v0.9.0
 	github.com/multiformats/go-multiaddr-dns v0.3.1 // indirect
 	github.com/multiformats/go-multiaddr-fmt v0.1.0 // indirect
 	github.com/multiformats/go-multibase v0.2.0 // indirect
