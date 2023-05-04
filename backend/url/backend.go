@@ -2,38 +2,32 @@ package url
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/taubyte/go-interfaces/vm"
-	"github.com/taubyte/vm/backend/i18n"
+	"github.com/taubyte/vm/backend/errors"
 )
 
-type backend struct {
-	http http.Client
-}
+type backend struct{}
 
-func New(client http.Client) vm.Backend {
-	return &backend{
-		http: client,
-	}
+func New() vm.Backend {
+	return &backend{}
 }
 
 func (b *backend) Get(multiAddr ma.Multiaddr) (io.ReadCloser, error) {
-	protocols, err := isMADns(multiAddr)
+	uri, err := buildUri(multiAddr)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("building uri failed with: %s", err)
 	}
 
-	uri, err := maUriFormat(multiAddr, protocols)
+	client := http.DefaultClient
+	client.Timeout = vm.GetTimeout
+	res, err := client.Get(uri)
 	if err != nil {
-		return nil, err
-	}
-
-	res, err := b.http.Get(uri)
-	if err != nil {
-		return nil, i18n.RetrieveError(uri, err, b)
+		return nil, errors.RetrieveError(uri, err, b)
 	}
 	defer res.Body.Close()
 

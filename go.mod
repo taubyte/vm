@@ -14,6 +14,7 @@ replace github.com/taubyte/go-interfaces => ../../github/go-interfaces
 
 // Direct Imports
 require (
+	github.com/ipfs/go-cid v0.4.1
 	github.com/spf13/afero v1.9.5
 	github.com/tetratelabs/wazero v1.0.0-rc.1.0.20230314055619-ced301183757
 	gotest.tools/v3 v3.4.0
@@ -51,7 +52,6 @@ require (
 	github.com/ipfs/go-bitfield v1.1.0 // indirect
 	github.com/ipfs/go-block-format v0.1.2 // indirect
 	github.com/ipfs/go-blockservice v0.5.0 // indirect
-	github.com/ipfs/go-cid v0.4.1 // indirect
 	github.com/ipfs/go-datastore v0.6.0 // indirect
 	github.com/ipfs/go-ipfs-blockstore v1.3.0 // indirect
 	github.com/ipfs/go-ipfs-ds-help v1.1.0 // indirect

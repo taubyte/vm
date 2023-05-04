@@ -29,8 +29,9 @@ func New(client tns.Client) vm.Resolver {
 
 func (s *resolver) Lookup(ctx vm.Context, name string) (ma.Multiaddr, error) {
 	splitAddress := strings.Split(name, "/")
-	if len(splitAddress) < 2 {
-		return nil, fmt.Errorf("invalid name `%s`", name)
+	splitAddressLen := len(splitAddress)
+	if splitAddressLen < 2 {
+		return nil, fmt.Errorf("invalid module name format `%s`", name)
 	}
 
 	moduleType := splitAddress[0]
@@ -38,25 +39,30 @@ func (s *resolver) Lookup(ctx vm.Context, name string) (ma.Multiaddr, error) {
 	case "": // Multi-Address
 		multiAddr, err := ma.NewMultiaddr(name)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("parsing multi-address `%s` failed with: %s", name, err)
 		}
 
 		return multiAddr, nil
 	default: // Local to project
 		switch moduleType {
 		case functionSpec.PathVariable.String(), smartOpSpec.PathVariable.String(), librarySpec.PathVariable.String(): // supported module types
-			if len(splitAddress) != 2 {
-				return nil, fmt.Errorf("invalid local module name got `%s` expected convention <moduleType>/<moduleName>", name)
+			if splitAddressLen != 2 {
+				return nil, fmt.Errorf(
+					"invalid local module name got `%s` expected <%s|%s|%s>/<name>",
+					name,
+					functionSpec.PathVariable.String(),
+					smartOpSpec.PathVariable.String(),
+					librarySpec.PathVariable.String(),
+				)
 			}
-
-			return internalDFSPath(ctx, s.tns, moduleType, splitAddress[1])
+			return projectRelativeToCid(ctx, s.tns, moduleType, splitAddress[1])
 		default:
 			return nil, fmt.Errorf("invalid moduleType `%s`", moduleType)
 		}
 	}
 }
 
-func internalDFSPath(ctx vm.Context, tns tns.Client, moduleType string, moduleName string) (ma.Multiaddr, error) {
+func projectRelativeToCid(ctx vm.Context, tns tns.Client, moduleType string, moduleName string) (ma.Multiaddr, error) {
 	project := ctx.Project()
 	application := ctx.Application()
 	branch := ctx.Branch()
@@ -80,7 +86,7 @@ func internalDFSPath(ctx vm.Context, tns tns.Client, moduleType string, moduleNa
 		return nil, fmt.Errorf("fetching cid for module `%s/%s` on project `%s` with application `%s` failed with: %s", moduleType, moduleName, project, application, err)
 	}
 
-	return ma.NewMultiaddr(fmt.Sprintf("/dfs/%s", assetCid))
+	return ma.NewMultiaddr("/dfs/" + assetCid)
 }
 
 func currentWasmModule(tns tns.Client, moduleType, moduleName, project, application, branch string) ([]tns.Path, error) {
@@ -91,12 +97,12 @@ func currentWasmModule(tns tns.Client, moduleType, moduleName, project, applicat
 
 	wasmIndex, err := tns.Fetch(wasmModulePath)
 	if err != nil {
-		return nil, fmt.Errorf("looking up module `%s` with app: `%s` in project `%s` failed with: %s", moduleType+"/"+moduleName, application, project, err)
+		return nil, fmt.Errorf("looking up module `%s/%s` with app: `%s` in project `%s` failed with: %s", moduleType, moduleName, application, project, err)
 	}
 
 	currentPath, err := wasmIndex.Current(branch)
 	if err != nil {
-		return nil, fmt.Errorf("looking up current commit for module `%s` with app: `%s` in project `%s` failed with: %s", moduleType+"/"+moduleName, application, project, err)
+		return nil, fmt.Errorf("looking up current commit for module `%s/%s` with app: `%s` in project `%s` failed with: %s", moduleType, moduleName, application, project, err)
 	}
 
 	return currentPath, nil

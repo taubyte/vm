@@ -18,7 +18,7 @@ func New(node peer.Node, httpClient goHttp.Client) ([]vm.Backend, error) {
 		return nil, errors.New("node is nil")
 	}
 
-	return []vm.Backend{dfs.New(node), url.New(httpClient)}, nil
+	return []vm.Backend{dfs.New(node), url.New()}, nil
 }
 
 func NewDev(node peer.Node, httpClient goHttp.Client) ([]vm.Backend, error) {
@@ -26,5 +26,5 @@ func NewDev(node peer.Node, httpClient goHttp.Client) ([]vm.Backend, error) {
 		return nil, errors.New("node is nil")
 	}
 
-	return []vm.Backend{dfs.New(node), file.New(), url.New(httpClient)}, nil
+	return []vm.Backend{dfs.New(node), file.New(), url.New()}, nil
 }

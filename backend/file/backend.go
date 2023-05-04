@@ -1,3 +1,5 @@
+//TODO: Build Tag only for development
+
 package file
 
 import (
@@ -5,7 +7,7 @@ import (
 	"os"
 
 	"github.com/taubyte/go-interfaces/vm"
-	"github.com/taubyte/vm/backend/i18n"
+	"github.com/taubyte/vm/backend/errors"
 
 	ma "github.com/multiformats/go-multiaddr"
 	resolv "github.com/taubyte/vm/resolvers/taubyte"
@@ -28,12 +30,12 @@ func (b *backend) Scheme() string {
 func (b *backend) Get(multiAddr ma.Multiaddr) (io.ReadCloser, error) {
 	protocols := multiAddr.Protocols()
 	if protocols[0].Code != resolv.P_FILE {
-		return nil, i18n.MultiAddrCompliant(multiAddr, resolv.FILE_PROTOCOL_NAME)
+		return nil, errors.MultiAddrCompliant(multiAddr, resolv.FILE_PROTOCOL_NAME)
 	}
 
 	path, err := multiAddr.ValueForProtocol(resolv.P_FILE)
 	if err != nil {
-		return nil, i18n.ParseProtocol(resolv.FILE_PROTOCOL_NAME, err)
+		return nil, errors.ParseProtocol(resolv.FILE_PROTOCOL_NAME, err)
 	}
 
 	// remove extra slash
@@ -41,7 +43,7 @@ func (b *backend) Get(multiAddr ma.Multiaddr) (io.ReadCloser, error) {
 
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, i18n.RetrieveError(path, err, b)
+		return nil, errors.RetrieveError(path, err, b)
 	}
 
 	return file, nil

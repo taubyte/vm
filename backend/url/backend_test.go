@@ -2,7 +2,6 @@ package url
 
 import (
 	"io"
-	goHttp "net/http"
 	"testing"
 
 	ma "github.com/multiformats/go-multiaddr"
@@ -10,7 +9,7 @@ import (
 )
 
 func TestBackend(t *testing.T) {
-	backend := New(*goHttp.DefaultClient)
+	backend := New()
 	assert.Equal(t, backend.Scheme(), "url")
 
 	httpUrl := "/dns4/ping.examples.tau.link/https/path/ping"

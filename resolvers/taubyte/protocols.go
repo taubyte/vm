@@ -1,6 +1,9 @@
 package resolver
 
 import (
+	"fmt"
+
+	"github.com/ipfs/go-cid"
 	ma "github.com/multiformats/go-multiaddr"
 )
 
@@ -23,8 +26,7 @@ var internalProtocols = []ma.Protocol{
 		Code:       P_DFS,
 		VCode:      ma.CodeToVarint(P_DFS),
 		Size:       ma.LengthPrefixedVarSize,
-		Path:       true,
-		Transcoder: ma.TranscoderUnix,
+		Transcoder: TranscoderCID,
 	},
 	{
 		Name:       FILE_PROTOCOL_NAME,
@@ -50,4 +52,29 @@ func init() {
 			panic(err)
 		}
 	}
+}
+
+var TranscoderCID = ma.NewTranscoderFromFunctions(cidStB, cidBtS, cidVal)
+
+func cidStB(s string) ([]byte, error) {
+	c, err := cid.Decode(s)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse cid addr: %s %s", s, err)
+	}
+
+	return c.Bytes(), nil
+}
+
+func cidVal(b []byte) error {
+	_, err := cid.Parse(b)
+	return err
+}
+
+func cidBtS(b []byte) (string, error) {
+	cid, err := cid.Parse(b)
+	if err != nil {
+		return "", err
+	}
+
+	return cid.String(), nil
 }

@@ -1,49 +1,79 @@
 package url
 
 import (
-	"errors"
 	"fmt"
 
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/taubyte/vm/backend/i18n"
+	"github.com/taubyte/vm/backend/errors"
 	resolv "github.com/taubyte/vm/resolvers/taubyte"
 )
 
-func isMADns(multiAddr ma.Multiaddr) (protocols []ma.Protocol, err error) {
-	protocols = multiAddr.Protocols()
-	switch protocols[0].Code {
-	case ma.P_DNS, ma.P_DNS4, ma.P_DNS6:
-		return
-	default:
-		return nil, i18n.MultiAddrCompliant(multiAddr, "url")
+func buildUri(multiAddr ma.Multiaddr) (uri string, err error) {
+	var scheme, host, path string
+
+	protocols := multiAddr.Protocols()
+	if len(protocols) < 2 {
+		return "", errors.MultiAddrCompliant(multiAddr, "url")
 	}
-}
 
-func maUriFormat(multiAddr ma.Multiaddr, protocols []ma.Protocol) (uri string, err error) {
-	var http, host, path string
+	host, err = getHost(protocols[0], multiAddr)
+	if err != nil {
+		return
+	}
 
-	for _, protocol := range protocols {
-		switch protocol.Code {
-		case ma.P_HTTP:
-			http = "http"
-		case ma.P_HTTPS:
-			http = "https"
-		case ma.P_DNS, ma.P_DNS4, ma.P_DNS6:
-			host, err = multiAddr.ValueForProtocol(protocol.Code)
-			if err != nil {
-				return "", i18n.ParseProtocol(protocol.Name, err)
-			}
-		case resolv.P_PATH:
-			path, err = multiAddr.ValueForProtocol(protocol.Code)
-			if err != nil {
-				return "", i18n.ParseProtocol(protocol.Name, err)
-			}
+	scheme, err = getScheme(protocols[1])
+	if err != nil {
+		return
+	}
+
+	if len(protocols) > 2 {
+		path, err = getPath(protocols[2], multiAddr)
+		if err != nil {
+			return
 		}
 	}
 
-	if len(http) == 0 || len(host) == 0 {
-		return "", errors.New("multi address does not include host or http(s) specification")
+	return fmt.Sprintf("%s://%s%s", scheme, host, path), nil
+}
+
+func getHost(protocol ma.Protocol, multiAddr ma.Multiaddr) (host string, err error) {
+	switch protocol.Code {
+	case ma.P_DNS, ma.P_DNS4, ma.P_DNS6, ma.P_IP4, ma.P_IP6:
+		host, err = multiAddr.ValueForProtocol(protocol.Code)
+		if err != nil {
+			err = errors.ParseProtocol(protocol.Name, err)
+			return
+		}
+		if len(host) < 1 {
+			err = fmt.Errorf("no host found")
+		}
+	default:
+		err = errors.MultiAddrCompliant(multiAddr, "url")
 	}
 
-	return fmt.Sprintf("%s://%s%s", http, host, path), nil
+	return
+}
+
+func getScheme(protocol ma.Protocol) (scheme string, err error) {
+	switch protocol.Code {
+	case ma.P_HTTP, ma.P_HTTPS:
+		scheme = protocol.Name
+	default:
+		err = fmt.Errorf("uri scheme not defined")
+	}
+
+	return
+}
+
+func getPath(protocol ma.Protocol, multiAddr ma.Multiaddr) (string, error) {
+	if protocol.Name != resolv.PATH_PROTOCOL_NAME {
+		return "", fmt.Errorf("expected path protocol got `%s`", protocol.Name)
+	}
+
+	path, err := multiAddr.ValueForProtocol(resolv.P_PATH)
+	if err != nil {
+		return "", errors.ParseProtocol(resolv.PATH_PROTOCOL_NAME, err)
+	}
+
+	return path, nil
 }

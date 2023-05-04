@@ -4,8 +4,6 @@ import (
 	"context"
 	"io"
 
-	goHttp "net/http"
-
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/vm/backend/dfs"
 	"github.com/taubyte/vm/backend/file"
@@ -40,7 +38,7 @@ func (t *testBackend) Inject(r io.Reader) (*testBackend, error) {
 }
 
 func HTTPBackend() vm.Backend {
-	return url.New(*goHttp.DefaultClient)
+	return url.New()
 }
 
 func AllBackends(injectReader io.Reader) (cid string, simpleNode peer.MockedNode, backends []vm.Backend, err error) {
