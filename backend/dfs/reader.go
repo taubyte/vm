@@ -17,3 +17,8 @@ func (zw *zWasmReadCloser) Close() error {
 func (zw *zWasmReadCloser) Read(p []byte) (n int, err error) {
 	return zw.unCompress.Read(p)
 }
+
+func (zip *zipReadCloser) Close() error {
+	zip.ReadCloser.Close()
+	return zip.parent.Close()
+}

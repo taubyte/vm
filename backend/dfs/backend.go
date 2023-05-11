@@ -1,15 +1,19 @@
 package dfs
 
 import (
+	"archive/zip"
 	"compress/lzw"
 	"context"
+	"fmt"
 	"io"
 
 	ma "github.com/multiformats/go-multiaddr"
 	peer "github.com/taubyte/go-interfaces/p2p/peer"
 	"github.com/taubyte/go-interfaces/vm"
+	"github.com/taubyte/go-specs/builders/wasm"
 	"github.com/taubyte/vm/backend/errors"
 	resolv "github.com/taubyte/vm/resolvers/taubyte"
+	"go4.org/readerutil"
 )
 
 func New(node peer.Node) vm.Backend {
@@ -36,10 +40,29 @@ func (b *backend) Get(multiAddr ma.Multiaddr) (io.ReadCloser, error) {
 		return nil, errors.RetrieveError(cid, err, b)
 	}
 
-	return &zWasmReadCloser{
-		dag:        dagReader,
-		unCompress: lzw.NewReader(dagReader, lzw.LSB, 8),
-	}, nil
+	// Backwards compatibility
+	size, _ := readerutil.Size(dagReader)
+	zipReader, err := zip.NewReader(
+		readerutil.NewBufferingReaderAt(dagReader),
+		size,
+	)
+	if err != nil {
+		dagReader.Seek(0, io.SeekStart)
+		return &zWasmReadCloser{
+			dag:        dagReader,
+			unCompress: lzw.NewReader(dagReader, lzw.LSB, 8),
+		}, nil
+	} else {
+		reader, err := zipReader.Open(wasm.WasmFile)
+		if err != nil {
+			return nil, fmt.Errorf("reading wasm file failed with: %s", err)
+		}
+
+		return &zipReadCloser{
+			parent:     dagReader,
+			ReadCloser: reader,
+		}, nil
+	}
 }
 
 func (b *backend) Scheme() string {
