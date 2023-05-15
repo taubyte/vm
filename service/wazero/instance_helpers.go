@@ -12,35 +12,7 @@ import (
 	wasi "github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1"
 )
 
-// func (i *instance) hostModule(defs *vm.HostModuleDefinitions) (vm.HostModule, error) {
-// 	hm, err := i.Expose("env")
-// 	if err != nil {
-// 		return nil, fmt.Errorf("exposing `env` failed with: %s", err)
-// 	}
-
-// 	funcDefs := i.defaultModuleFunctions()
-
-// 	if defs != nil {
-// 		funcDefs = append(funcDefs, defs.Functions...)
-
-// 		if err = hm.Functions(funcDefs...); err != nil {
-// 			return nil, fmt.Errorf("adding functions to host module failed with: %s", err)
-// 		}
-
-// 		if err = hm.Globals(defs.Globals...); err != nil {
-// 			return nil, fmt.Errorf("adding globals to host module failed with: %s", err)
-// 		}
-
-// 		if err = hm.Memories(defs.Memories...); err != nil {
-// 			return nil, fmt.Errorf("adding memories to host module failed with: %s", err)
-// 		}
-// 	}
-
-// 	return hm, nil
-// }
-
 func (i *instance) initRuntime() error {
-	fmt.Println("ININT RUNINTEM")
 	i.runtime = &runtime{
 		primitive:     helpers.NewRuntime(i.ctx.Context()),
 		wasiStartDone: make(chan bool, 1),
