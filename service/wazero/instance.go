@@ -7,26 +7,11 @@ import (
 
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
-	wasi "github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1"
 )
 
 var _ vm.Instance = &instance{}
 
 func (i *instance) Load(hostModuleDefs *vm.HostModuleDefinitions) error {
-	i.initRuntime()
-
-	hm, err := i.hostModule(hostModuleDefs)
-	if err != nil {
-		return fmt.Errorf("instantiating host module failed with: %s", err)
-	}
-
-	if _, err := hm.Compile(); err != nil {
-		return fmt.Errorf("compiling host module failed with: %s", err)
-	}
-
-	if _, err := wasi.NewBuilder(i.runtime.primitive).Instantiate(i.runtime.ctx); err != nil {
-		return fmt.Errorf("instantiating host module failed with: %s", err)
-	}
 
 	return nil
 }
@@ -34,10 +19,6 @@ func (i *instance) Load(hostModuleDefs *vm.HostModuleDefinitions) error {
 func (i *instance) Attach(plugin vm.Plugin) (vm.PluginInstance, vm.ModuleInstance, error) {
 	if err := i.checkRuntime(); err != nil {
 		return nil, nil, err
-	}
-
-	if plugin == nil {
-		return nil, nil, errors.New("plugin is nil ")
 	}
 
 	hm := &hostModule{
@@ -63,12 +44,16 @@ func (i *instance) Attach(plugin vm.Plugin) (vm.PluginInstance, vm.ModuleInstanc
 }
 
 func (i *instance) Module(name string) (vm.ModuleInstance, error) {
+	i.runtime.lock.Lock()
+	defer i.runtime.lock.Unlock()
+	return i.module(name)
+}
+
+func (i *instance) module(name string) (vm.ModuleInstance, error) {
 	if err := i.checkRuntime(); err != nil {
 		return nil, err
 	}
 
-	i.runtime.lock.Lock()
-	defer i.runtime.lock.Unlock()
 	modInst := i.runtime.primitive.Module(name)
 	if modInst == nil {
 		// assume module was not instantiated
@@ -91,12 +76,16 @@ func (i *instance) Module(name string) (vm.ModuleInstance, error) {
 		}
 
 		// handle imports
+		deps := make(map[string]bool)
 		for _, dep := range module.Imports() {
 			if dep == "env" {
 				continue
 			}
+			deps[dep] = true
+		}
 
-			_, err := i.Module(dep)
+		for dep := range deps {
+			_, err := i.module(dep)
 			if err != nil {
 				return nil, fmt.Errorf("loading module `%s` dependency `%s` failed with: %s", name, dep, err)
 			}

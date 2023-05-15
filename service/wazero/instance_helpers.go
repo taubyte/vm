@@ -9,36 +9,38 @@ import (
 	"github.com/taubyte/go-interfaces/vm"
 	helpers "github.com/taubyte/vm/helpers/wazero"
 	"github.com/tetratelabs/wazero"
+	wasi "github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1"
 )
 
-func (i *instance) hostModule(defs *vm.HostModuleDefinitions) (vm.HostModule, error) {
-	hm, err := i.Expose("env")
-	if err != nil {
-		return nil, fmt.Errorf("exposing `env` failed with: %s", err)
-	}
+// func (i *instance) hostModule(defs *vm.HostModuleDefinitions) (vm.HostModule, error) {
+// 	hm, err := i.Expose("env")
+// 	if err != nil {
+// 		return nil, fmt.Errorf("exposing `env` failed with: %s", err)
+// 	}
 
-	funcDefs := i.defaultModuleFunctions()
+// 	funcDefs := i.defaultModuleFunctions()
 
-	if defs != nil {
-		funcDefs = append(funcDefs, defs.Functions...)
+// 	if defs != nil {
+// 		funcDefs = append(funcDefs, defs.Functions...)
 
-		if err = hm.Functions(funcDefs...); err != nil {
-			return nil, fmt.Errorf("adding functions to host module failed with: %s", err)
-		}
+// 		if err = hm.Functions(funcDefs...); err != nil {
+// 			return nil, fmt.Errorf("adding functions to host module failed with: %s", err)
+// 		}
 
-		if err = hm.Globals(defs.Globals...); err != nil {
-			return nil, fmt.Errorf("adding globals to host module failed with: %s", err)
-		}
+// 		if err = hm.Globals(defs.Globals...); err != nil {
+// 			return nil, fmt.Errorf("adding globals to host module failed with: %s", err)
+// 		}
 
-		if err = hm.Memories(defs.Memories...); err != nil {
-			return nil, fmt.Errorf("adding memories to host module failed with: %s", err)
-		}
-	}
+// 		if err = hm.Memories(defs.Memories...); err != nil {
+// 			return nil, fmt.Errorf("adding memories to host module failed with: %s", err)
+// 		}
+// 	}
 
-	return hm, nil
-}
+// 	return hm, nil
+// }
 
-func (i *instance) initRuntime() {
+func (i *instance) initRuntime() error {
+	fmt.Println("ININT RUNINTEM")
 	i.runtime = &runtime{
 		primitive:     helpers.NewRuntime(i.ctx.Context()),
 		wasiStartDone: make(chan bool, 1),
@@ -46,10 +48,29 @@ func (i *instance) initRuntime() {
 
 	i.runtime.ctx, i.runtime.ctxC = context.WithCancel(i.ctx.Context())
 
+	hm, err := i.Expose("env")
+	if err != nil {
+		return fmt.Errorf("exposing `env` failed with: %s", err)
+	}
+
+	if err = hm.Functions(i.defaultModuleFunctions()...); err != nil {
+		return fmt.Errorf("adding functions to host module failed with: %s", err)
+	}
+
+	if _, err := hm.Compile(); err != nil {
+		return fmt.Errorf("adding functions to host module failed with: %s", err)
+	}
+
+	if _, err := wasi.NewBuilder(i.runtime.primitive).Instantiate(i.runtime.ctx); err != nil {
+		return fmt.Errorf("instantiating host module failed with: %s", err)
+	}
+
 	go func() {
 		<-i.runtime.ctx.Done()
 		i.runtime.Close(i.ctx.Context())
 	}()
+
+	return nil
 }
 
 func (i *instance) instantiate(name string, module vm.SourceModule) error {
@@ -86,6 +107,7 @@ func (i *instance) instantiate(name string, module vm.SourceModule) error {
 		return fmt.Errorf("instantiating compiled module `%s` failed with: %s", name, err)
 	}
 
+	// TODO: how do we handle many modules using start?
 	// execute _start and keep it running as long as the module is running
 	// this ensures that if the language has a runtime, it'll be running fine
 	if module.ImportsFunction("env", "_ready") {

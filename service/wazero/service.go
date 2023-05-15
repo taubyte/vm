@@ -21,7 +21,7 @@ func (s *service) New(ctx vm.Context) (vm.Instance, error) {
 		deps:       make(map[string]vm.SourceModule, 0),
 	}
 
-	return r, nil
+	return r, r.initRuntime()
 }
 
 func (s *service) Source() vm.Source {

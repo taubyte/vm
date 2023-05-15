@@ -53,9 +53,13 @@ func (b *backend) Get(multiAddr ma.Multiaddr) (io.ReadCloser, error) {
 			unCompress: lzw.NewReader(dagReader, lzw.LSB, 8),
 		}, nil
 	} else {
+		// Trying for both main/artifact.wasm
 		reader, err := zipReader.Open(wasm.WasmFile)
 		if err != nil {
-			return nil, fmt.Errorf("reading wasm file failed with: %s", err)
+			reader, err = zipReader.Open(wasm.DeprecatedWasmFile)
+			if err != nil {
+				return nil, fmt.Errorf("reading wasm file as aritfact and main failed with: %s", err)
+			}
 		}
 
 		return &zipReadCloser{
