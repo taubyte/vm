@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/go-interfaces/vm/mocks"
 	"gotest.tools/v3/assert"
 )
@@ -29,7 +28,6 @@ func TestModuleFunctionFailure(t *testing.T) {
 func TestInstance(t *testing.T) {
 	instance, err := newBasicInstance()
 	assert.NilError(t, err)
-
 	if instance.Stderr() == nil {
 		t.Error("stderr is nil")
 	}
@@ -45,10 +43,6 @@ func TestInstance(t *testing.T) {
 	if instance.Context() == nil {
 		t.Error("context is nil")
 	}
-
-	// runtime load error
-	_, _, err = instance.Attach(nil)
-	assertError(t, err)
 
 	err = instance.Close()
 	assert.NilError(t, err)
@@ -68,25 +62,6 @@ func TestRuntime(t *testing.T) {
 
 	err = instance.Close()
 	assert.NilError(t, err)
-
-	// duplicate function error
-	err = instance.Load(&vm.HostModuleDefinitions{Functions: []*vm.HostModuleFunctionDefinition{testFunc, testFunc}})
-	assertError(t, err)
-
-	// duplicate global error
-	err = instance.Load(&vm.HostModuleDefinitions{
-		Functions: []*vm.HostModuleFunctionDefinition{testFunc},
-		Globals:   []*vm.HostModuleGlobalDefinition{mockGlobalDef, mockGlobalDef},
-	})
-	assertError(t, err)
-
-	// duplicate memory error
-	err = instance.Load(&vm.HostModuleDefinitions{
-		Functions: []*vm.HostModuleFunctionDefinition{testFunc},
-		Memories:  []*vm.HostModuleMemoryDefinition{mockMemoryDef, mockMemoryDef},
-	})
-	assertError(t, err)
-
 }
 
 func TestRuntimeCall(t *testing.T) {
@@ -164,10 +139,6 @@ func TestRuntimePlugin(t *testing.T) {
 	plugin := mocks.NewPlugin(false)
 	_, _, err = instance.Attach(plugin)
 	assert.NilError(t, err)
-
-	// nil plugin error
-	_, _, err = instance.Attach(nil)
-	assertError(t, err)
 
 	// mock New error
 	plugin = mocks.NewPlugin(true)

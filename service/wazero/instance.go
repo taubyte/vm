@@ -12,7 +12,6 @@ import (
 var _ vm.Instance = &instance{}
 
 func (i *instance) Load(hostModuleDefs *vm.HostModuleDefinitions) error {
-
 	return nil
 }
 

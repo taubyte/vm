@@ -97,7 +97,7 @@ func (i *instance) instantiate(name string, module vm.SourceModule) error {
 }
 
 func (i *instance) defaultModuleFunctions() []*vm.HostModuleFunctionDefinition {
-	return []*vm.HostModuleFunctionDefinition{
+	moduleFunctions := []*vm.HostModuleFunctionDefinition{
 		{
 			Name: "_ready",
 			Handler: func(ctx context.Context) {
@@ -111,4 +111,11 @@ func (i *instance) defaultModuleFunctions() []*vm.HostModuleFunctionDefinition {
 			},
 		},
 	}
+
+	moduleFunctions = append(moduleFunctions, defaultModuleFunctions...)
+
+	return moduleFunctions
 }
+
+// for testing override
+var defaultModuleFunctions []*vm.HostModuleFunctionDefinition

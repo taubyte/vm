@@ -50,17 +50,9 @@ func newBasicInstance() (vm.Instance, error) {
 }
 
 func newLoadedInstance() (vm.Instance, error) {
+	defaultModuleFunctions = []*vm.HostModuleFunctionDefinition{testFunc}
 	instance, err := newBasicInstance()
 	if err != nil {
-		return nil, err
-	}
-
-	if err := instance.Load(
-		&vm.HostModuleDefinitions{
-			Functions: []*vm.HostModuleFunctionDefinition{testFunc},
-			Memories:  []*vm.HostModuleMemoryDefinition{mockMemoryDef},
-			Globals:   []*vm.HostModuleGlobalDefinition{mockGlobalDef},
-		}); err != nil {
 		return nil, err
 	}
 

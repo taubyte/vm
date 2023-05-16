@@ -819,10 +819,16 @@ github.com/syndtr/goleveldb v1.0.0/go.mod h1:ZVVdQEZoIme9iO1Ch2Jdy24qqXrMMOU6lpP
 github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07/go.mod h1:kDXzergiv9cbyO7IOYJZWg1U88JhDg3PB6klq9Hg2pA=
 github.com/taubyte/domain-validation v1.0.0 h1:yUt6y7b/3PC9aocvl7s8cBKG4ieN35zQqVQIywGUg4o=
 github.com/taubyte/domain-validation v1.0.0/go.mod h1:/X3yd7sBjnE323rA8I9PiUt5+NlKU4I02nQik25Vqe8=
+github.com/taubyte/go-interfaces v0.1.2-pre-v2 h1:bhk8AsvxUauw5CRGTGwPLkNwrysXFAJCwTFdJ7XxJ5A=
+github.com/taubyte/go-interfaces v0.1.2-pre-v2/go.mod h1:Ie953s9M3lhSvKuhJwGmxiAFoGq7rj5+TN2dxj5Nk3A=
 github.com/taubyte/go-simple-container v0.4.2 h1:WMC/kgubrQiiDzMfLs3X0WcAMl9hkVOyxpOHjMPXjtg=
 github.com/taubyte/go-simple-container v0.4.2/go.mod h1:7nFas4yr17+jFUWmQLBNZ//s40Y+7/iiJhJkXAJDGiY=
 github.com/taubyte/go-simple-git v0.2.5 h1:ESwhDVHGF0oVPFtZvCS5SzrugjCpK0KKaQIQC6AxzDE=
 github.com/taubyte/go-simple-git v0.2.5/go.mod h1:tPUTQo7GPNEYOV1kRMqWLv3cihLN4MKyK1kW36xr9wk=
+github.com/taubyte/go-specs v0.10.2-pre h1:GhjErc/ttk933uq8rk/scGfyQ5i4ym7FXDjCwYSsOwU=
+github.com/taubyte/go-specs v0.10.2-pre/go.mod h1:OLj64wgg6hEf/xa5v/yWFPNoNQSK2Pf99e6KnEMW2ZI=
+github.com/taubyte/utils v0.1.6-pre h1:nxiES1mJCVtFWEcWn/lWWsqW/P5b/9WkIpyQJ+Z8vV4=
+github.com/taubyte/utils v0.1.6-pre/go.mod h1:ZWThhOfu5fH27IFl+1xxo0lbW9+RbeeUftczTmHnBHI=
 github.com/taubyte/vm-wasm-utils v1.0.1 h1:XArvqhkLsU83JJpGNcr6L0juTwf0uN9eT7GZptfrhFs=
 github.com/taubyte/vm-wasm-utils v1.0.1/go.mod h1:gMeeANg5D52TawnPMGFDX6mjsBuHQVp+ofKjiktJGDk=
 github.com/tetratelabs/wazero v1.0.0-rc.1.0.20230314055619-ced301183757 h1:bTvKkm+OWD9rU9omz7aZAc5FoKmLfjTcNkEDJnVZTyU=

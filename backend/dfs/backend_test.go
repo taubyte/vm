@@ -20,7 +20,6 @@ func TestBackEnd(t *testing.T) {
 
 	mAddr, err := ma.NewMultiaddr("/dfs/" + backend.Cid)
 	assert.NilError(t, err)
-
 	dagReader, err := backend.Get(mAddr)
 	assert.NilError(t, err)
 

@@ -4,75 +4,11 @@ go 1.19
 
 replace github.com/ipfs/go-block-format => github.com/ipfs/go-block-format v0.1.1
 
-replace bitbucket.org/taubyte/p2p => ../p2p
-
-replace bitbucket.org/taubyte/go-moody-blues => ../go-moody-blues
-
-replace github.com/taubyte/go-interfaces => ../go-interfaces
-
-replace bitbucket.org/taubyte/seer-p2p-client => ../seer-p2p-client
-
-replace bitbucket.org/taubyte/dreamland => ../dreamland
-
-replace bitbucket.org/taubyte/tns => ../tns
-
-replace bitbucket.org/taubyte/auth => ../auth
-
-replace bitbucket.org/taubyte/billing => ../billing
-
-replace bitbucket.org/taubyte/hoarder => ../hoarder
-
-replace bitbucket.org/taubyte/patrick => ../patrick
-
-replace bitbucket.org/taubyte/monkey => ../monkey
-
-replace bitbucket.org/taubyte/seer => ../seer
-
-replace bitbucket.org/taubyte/node => ../node
-
-replace bitbucket.org/taubyte/kvdb => ../kvdb
-
-replace bitbucket.org/taubyte/tns-p2p-client => ../tns-p2p-client
-
-replace bitbucket.org/taubyte/config-compiler => ../config-compiler
-
-replace bitbucket.org/taubyte/go-node-counters => ../go-node-counters
-
-replace bitbucket.org/taubyte/go-node-database => ../go-node-database
-
-replace bitbucket.org/taubyte/go-node-http => ../go-node-http
-
-replace bitbucket.org/taubyte/go-node-ipfs => ../go-node-ipfs
-
-replace bitbucket.org/taubyte/go-node-p2p => ../go-node-p2p
-
-replace bitbucket.org/taubyte/go-node-pubsub => ../go-node-pubsub
-
-replace bitbucket.org/taubyte/go-node-smartops => ../go-node-smartops
-
-replace bitbucket.org/taubyte/go-node-storage => ../go-node-storage
-
-replace bitbucket.org/taubyte/go-node-tvm => ../go-node-tvm
-
-replace bitbucket.org/taubyte/http-auto => ../http-auto
-
-replace bitbucket.org/taubyte/go-builder => ../go-builder
-
-replace github.com/taubyte/utils => ../utils
-
-replace github.com/taubyte/go-specs => ../go-specs
-
-replace github.com/taubyte/vm-plugins => ../vm-plugins
-
-replace github.com/taubyte/vm => ../vm
-
-replace bitbucket.org/taubyte/vm-test-examples => ../vm-test-examples
-
 // Taubyte Direct Imports
 require (
-	github.com/taubyte/go-interfaces v0.1.1
-	github.com/taubyte/go-specs v0.10.0
-	github.com/taubyte/utils v0.1.5
+	github.com/taubyte/go-interfaces v0.1.2-pre-v2
+	github.com/taubyte/go-specs v0.10.2-pre
+	github.com/taubyte/utils v0.1.6-pre
 	github.com/taubyte/vm-wasm-utils v1.0.1
 )
 
