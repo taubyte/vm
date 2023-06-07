@@ -51,12 +51,11 @@ type instance struct {
 	service    vm.Service
 	lock       sync.RWMutex
 	fs         afero.Fs
+	config     *vm.Config
 	output     *bytes.Buffer
 	outputErr  *bytes.Buffer
 	compileMap map[string]wazero.CompiledModule
 	deps       map[string]vm.SourceModule
-
-	runtime *runtime
 }
 
 /*************** Module Instance ***************/
@@ -68,13 +67,16 @@ type moduleInstance struct {
 /*************** Runtime ***************/
 
 type runtime struct {
-	primitive      wazero.Runtime
-	wasiStartError error
-	wasiStartDone  chan bool
-	lock           sync.RWMutex
+	instance *instance
+	runtime  wazero.Runtime
 
 	ctx  context.Context
 	ctxC context.CancelFunc
+
+	wasiStartError error
+	wasiStartDone  chan bool
+
+	lock sync.RWMutex
 }
 
 /*************** Service ***************/

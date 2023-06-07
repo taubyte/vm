@@ -1,6 +1,10 @@
 package context
 
-import gocontext "context"
+import (
+	gocontext "context"
+
+	"github.com/taubyte/go-interfaces/vm"
+)
 
 func (c *vmContext) Context() gocontext.Context {
 	return c.ctx
@@ -29,4 +33,10 @@ func (c *vmContext) Branch() string {
 
 func (c *vmContext) Commit() string {
 	return c.commit
+}
+
+func (c *vmContext) Clone(ctx gocontext.Context) vm.Context {
+	c0 := *c
+	c0.ctx, c0.ctxC = gocontext.WithCancel(ctx)
+	return &c0
 }

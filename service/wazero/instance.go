@@ -1,139 +1,67 @@
 package service
 
 import (
-	"errors"
+	"context"
 	"fmt"
 	"io"
 
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
+	helpers "github.com/taubyte/vm/helpers/wazero"
 	wasi "github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1"
 )
 
 var _ vm.Instance = &instance{}
 
-func (i *instance) Load(hostModuleDefs *vm.HostModuleDefinitions) error {
-	i.initRuntime()
+func (i *instance) Runtime(hostDef *vm.HostModuleDefinitions) (vm.Runtime, error) {
+	rt := helpers.NewRuntime(i.ctx.Context(), i.config)
+	r := &runtime{
+		instance:      i,
+		wasiStartDone: make(chan bool, 1),
+		runtime:       rt,
+	}
 
-	hm, err := i.hostModule(hostModuleDefs)
+	r.ctx, r.ctxC = context.WithCancel(i.ctx.Context())
+
+	go func() {
+		<-r.ctx.Done()
+		r.Close()
+	}()
+
+	hm, err := r.Expose("env")
 	if err != nil {
-		return fmt.Errorf("instantiating host module failed with: %s", err)
+		return nil, fmt.Errorf("exposing `env` failed with: %w", err)
 	}
 
-	if _, err := hm.Compile(); err != nil {
-		return fmt.Errorf("compiling host module failed with: %s", err)
-	}
+	moduleFunctions := r.defaultModuleFunctions()
 
-	if _, err := wasi.NewBuilder(i.runtime.primitive).Instantiate(i.runtime.ctx); err != nil {
-		return fmt.Errorf("instantiating host module failed with: %s", err)
-	}
+	if hostDef != nil {
+		moduleFunctions = append(moduleFunctions, hostDef.Functions...)
 
-	return nil
-}
-
-func (i *instance) Attach(plugin vm.Plugin) (vm.PluginInstance, vm.ModuleInstance, error) {
-	if err := i.checkRuntime(); err != nil {
-		return nil, nil, err
-	}
-
-	if plugin == nil {
-		return nil, nil, errors.New("plugin is nil ")
-	}
-
-	hm := &hostModule{
-		ctx:       i.ctx,
-		name:      plugin.Name(),
-		runtime:   i.runtime,
-		functions: make(map[string]functionDef),
-		memories:  make(map[string]memoryPages),
-		globals:   make(map[string]interface{}),
-	}
-
-	pi, err := plugin.New(i)
-	if err != nil {
-		return nil, nil, fmt.Errorf("creating new plugin instance failed with: %s", err)
-	}
-
-	mInst, err := pi.Load(hm)
-	if err != nil {
-		return nil, nil, fmt.Errorf("loading plugin instance failed with: %s", err)
-	}
-
-	return pi, mInst, nil
-}
-
-func (i *instance) Module(name string) (vm.ModuleInstance, error) {
-	if err := i.checkRuntime(); err != nil {
-		return nil, err
-	}
-
-	i.runtime.lock.Lock()
-	defer i.runtime.lock.Unlock()
-	modInst := i.runtime.primitive.Module(name)
-	if modInst == nil {
-		// assume module was not instantiated
-		// get it from source
-
-		i.lock.RLock()
-		module, ok := i.deps[name]
-		i.lock.RUnlock()
-
-		var err error
-		if !ok {
-			module, err = i.service.Source().Module(i.ctx, name)
-			if err != nil {
-				return nil, fmt.Errorf("loading module `%s` failed with: %s", name, err)
-			}
-
-			i.lock.Lock()
-			i.deps[name] = module
-			i.lock.Unlock()
+		if err = hm.Globals(hostDef.Globals...); err != nil {
+			return nil, fmt.Errorf("adding global definitions to host module failed with: %w", err)
 		}
 
-		// handle imports
-		for _, dep := range module.Imports() {
-			if dep == "env" {
-				continue
-			}
-
-			_, err := i.Module(dep)
-			if err != nil {
-				return nil, fmt.Errorf("loading module `%s` dependency `%s` failed with: %s", name, dep, err)
-			}
-		}
-
-		// then start
-		err = i.instantiate(name, module)
-		if err != nil {
-			return nil, fmt.Errorf("creating an instance of module `%s` failed with: %s", name, err)
-		}
-
-		modInst = i.runtime.primitive.Module(name)
-		if modInst == nil {
-			return nil, fmt.Errorf("unknown error with module `%s`", name)
+		if err = hm.Memories(hostDef.Memories...); err != nil {
+			return nil, fmt.Errorf("adding memory definitions to host module failed with: %w", err)
 		}
 
 	}
 
-	return &moduleInstance{
-		module: modInst,
-		ctx:    i.runtime.ctx,
-	}, nil
-}
-
-func (i *instance) Expose(name string) (vm.HostModule, error) {
-	if err := i.checkRuntime(); err != nil {
-		return nil, err
+	if err = hm.Functions(moduleFunctions...); err != nil {
+		return nil, fmt.Errorf("adding function definitions to host module with: %s", err)
 	}
 
-	return &hostModule{
-		ctx:       i.ctx,
-		name:      name,
-		runtime:   i.runtime,
-		functions: make(map[string]functionDef),
-		memories:  make(map[string]memoryPages),
-		globals:   make(map[string]interface{}),
-	}, nil
+	if _, err = hm.Compile(); err != nil {
+		return nil, fmt.Errorf("compiling host module failed with: %s", err)
+
+	}
+
+	if _, err = wasi.NewBuilder(r.runtime).Instantiate(r.ctx); err != nil {
+		return nil, fmt.Errorf("instantiating host module failed with: %s", err)
+	}
+
+	return r, nil
 }
 
 func (i *instance) Stdout() io.Reader {
@@ -149,21 +77,11 @@ func (i *instance) Filesystem() afero.Fs {
 }
 
 func (i *instance) Close() error {
-	if i.checkRuntime() == nil {
-		i.runtime.ctxC()
-	}
-
+	i.lock.Lock()
+	defer i.lock.Unlock()
 	return nil
 }
 
 func (i *instance) Context() vm.Context {
 	return i.ctx
-}
-
-func (i *instance) checkRuntime() error {
-	if i.runtime == nil {
-		return errors.New("runtime not loaded")
-	}
-
-	return nil
 }

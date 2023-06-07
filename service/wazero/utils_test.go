@@ -40,40 +40,45 @@ func newService() (vm.Context, vm.Service, error) {
 	return ctx, New(ctx.Context(), source), nil
 }
 
-func newBasicInstance() (vm.Instance, error) {
+func newInstance() (vm.Instance, error) {
 	ctx, service, err := newService()
 	if err != nil {
 		return nil, err
 	}
 
-	return service.New(ctx)
+	return service.New(ctx, vm.Config{})
 }
 
-func newLoadedInstance() (vm.Instance, error) {
-	instance, err := newBasicInstance()
+func newBasicRuntime() (vm.Runtime, error) {
+	instance, err := newInstance()
 	if err != nil {
 		return nil, err
 	}
 
-	if err := instance.Load(
+	return instance.Runtime(nil)
+}
+
+func newRuntimeWithHostDefs() (vm.Runtime, error) {
+	instance, err := newInstance()
+	if err != nil {
+		return nil, err
+	}
+
+	return instance.Runtime(
 		&vm.HostModuleDefinitions{
 			Functions: []*vm.HostModuleFunctionDefinition{testFunc},
 			Memories:  []*vm.HostModuleMemoryDefinition{mockMemoryDef},
 			Globals:   []*vm.HostModuleGlobalDefinition{mockGlobalDef},
-		}); err != nil {
-		return nil, err
-	}
-
-	return instance, err
+		})
 }
 
 func newModuleInstance() (vm.ModuleInstance, error) {
-	instance, err := newLoadedInstance()
+	runtime, err := newRuntimeWithHostDefs()
 	if err != nil {
 		return nil, err
 	}
 
-	return instance.Module(functionSpec.ModuleName(test_utils.TestFunc.Name))
+	return runtime.Module(functionSpec.ModuleName(test_utils.TestFunc.Name))
 
 }
 

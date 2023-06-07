@@ -3,8 +3,10 @@ package dfs
 import (
 	"compress/lzw"
 	"context"
+	"fmt"
 	"io"
 
+	"github.com/ipfs/go-cid"
 	ma "github.com/multiformats/go-multiaddr"
 	peer "github.com/taubyte/go-interfaces/p2p/peer"
 	"github.com/taubyte/go-interfaces/vm"
@@ -24,16 +26,32 @@ func (b *backend) Get(multiAddr ma.Multiaddr) (io.ReadCloser, error) {
 		return nil, errors.MultiAddrCompliant(multiAddr, resolv.DFS_PROTOCOL_NAME)
 	}
 
-	cid, err := multiAddr.ValueForProtocol(resolv.P_DFS)
+	_cid, err := multiAddr.ValueForProtocol(resolv.P_DFS)
 	if err != nil {
 		return nil, errors.ParseProtocol(resolv.DFS_PROTOCOL_NAME, err)
 	}
 
-	ctx, ctxC := context.WithTimeout(b.node.Context(), vm.GetTimeout)
-	dagReader, err := b.node.GetFile(ctx, cid)
-	ctxC()
+	__cid, err := cid.Decode(_cid)
 	if err != nil {
-		return nil, errors.RetrieveError(cid, err, b)
+		return nil, err
+	}
+
+	ctx, ctxC := context.WithTimeout(b.node.Context(), vm.GetTimeout)
+	defer ctxC()
+
+	ok, err := b.node.DAG().BlockStore().Has(ctx, __cid)
+	if !ok || err != nil {
+		dagReader, err := b.node.GetFile(ctx, _cid)
+		if err != nil {
+			return nil, fmt.Errorf("caching CID `%s` failed with:  %w", _cid, err)
+		}
+
+		dagReader.Close()
+	}
+
+	dagReader, err := b.node.GetFile(ctx, _cid)
+	if err != nil {
+		return nil, errors.RetrieveError(_cid, err, b)
 	}
 
 	return &zWasmReadCloser{

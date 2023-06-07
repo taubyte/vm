@@ -5,16 +5,18 @@ go 1.19
 // Taubyte Direct Imports
 require (
 	github.com/taubyte/go-interfaces v0.1.1
-	github.com/taubyte/go-specs v0.10.0
+	github.com/taubyte/go-specs v0.10.2-pre
 	github.com/taubyte/utils v0.1.5
-	github.com/taubyte/vm-wasm-utils v1.0.1
+	github.com/taubyte/vm-wasm-utils v1.0.2
 )
+
+replace github.com/taubyte/go-interfaces => /home/tafkhan/Documents/Work/Taubyte/github/go-interfaces
 
 // Direct Imports
 require (
 	github.com/ipfs/go-cid v0.4.1
 	github.com/spf13/afero v1.9.5
-	github.com/tetratelabs/wazero v1.0.0-rc.1.0.20230314055619-ced301183757
+	github.com/tetratelabs/wazero v1.0.3
 	gotest.tools/v3 v3.4.0
 )
 
@@ -49,23 +51,14 @@ require (
 	github.com/ipfs/bbloom v0.0.4 // indirect
 	github.com/ipfs/go-bitfield v1.1.0 // indirect
 	github.com/ipfs/go-block-format v0.1.2 // indirect
-	github.com/ipfs/go-blockservice v0.5.0 // indirect
 	github.com/ipfs/go-datastore v0.6.0 // indirect
-	github.com/ipfs/go-ipfs-blockstore v1.3.0 // indirect
-	github.com/ipfs/go-ipfs-ds-help v1.1.0 // indirect
-	github.com/ipfs/go-ipfs-exchange-interface v0.2.0 // indirect
-	github.com/ipfs/go-ipfs-files v0.3.0 // indirect
 	github.com/ipfs/go-ipfs-util v0.0.2 // indirect
 	github.com/ipfs/go-ipld-cbor v0.0.6 // indirect
 	github.com/ipfs/go-ipld-format v0.4.0 // indirect
 	github.com/ipfs/go-ipld-legacy v0.1.1 // indirect
-	github.com/ipfs/go-libipfs v0.6.2 // indirect
 	github.com/ipfs/go-log v1.0.5 // indirect
 	github.com/ipfs/go-log/v2 v2.5.1 // indirect
-	github.com/ipfs/go-merkledag v0.10.0 // indirect
 	github.com/ipfs/go-metrics-interface v0.0.1 // indirect
-	github.com/ipfs/go-unixfs v0.4.5 // indirect
-	github.com/ipfs/go-verifcid v0.0.2 // indirect
 	github.com/ipld/go-codec-dagpb v1.6.0 // indirect
 	github.com/ipld/go-ipld-prime v0.20.0 // indirect
 	github.com/ipsn/go-ipfs v0.0.0-20190407150747-8b9b72514244 // indirect
@@ -80,7 +73,6 @@ require (
 	github.com/libp2p/go-flow-metrics v0.1.0 // indirect
 	github.com/libp2p/go-libp2p v0.27.1 // indirect
 	github.com/libp2p/go-libp2p-asn-util v0.3.0 // indirect
-	github.com/libp2p/go-libp2p-core v0.20.1 // indirect
 	github.com/libp2p/go-libp2p-pubsub v0.9.3 // indirect
 	github.com/libp2p/go-msgio v0.3.0 // indirect
 	github.com/libp2p/go-nat v0.1.0 // indirect
@@ -133,4 +125,40 @@ require (
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	lukechampine.com/blake3 v1.1.7 // indirect
+)
+
+require (
+	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
+	github.com/containerd/cgroups v1.1.0 // indirect
+	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
+	github.com/crackcomm/go-gitignore v0.0.0-20170627025303-887ab5e44cc3 // indirect
+	github.com/cskr/pubsub v1.0.2 // indirect
+	github.com/docker/go-units v0.5.0 // indirect
+	github.com/elastic/gosigar v0.14.2 // indirect
+	github.com/godbus/dbus/v5 v5.1.0 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/hsanjuan/ipfs-lite v1.7.0 // indirect
+	github.com/ipfs/boxo v0.8.1 // indirect
+	github.com/ipfs/go-cidutil v0.1.0 // indirect
+	github.com/ipfs/go-ipfs-delay v0.0.1 // indirect
+	github.com/ipfs/go-ipfs-pq v0.0.3 // indirect
+	github.com/ipfs/go-peertaskqueue v0.8.1 // indirect
+	github.com/libp2p/go-libp2p-kad-dht v0.22.0 // indirect
+	github.com/libp2p/go-libp2p-kbucket v0.5.0 // indirect
+	github.com/libp2p/go-libp2p-record v0.2.0 // indirect
+	github.com/libp2p/go-libp2p-routing-helpers v0.6.1 // indirect
+	github.com/libp2p/go-reuseport v0.2.0 // indirect
+	github.com/libp2p/go-yamux/v4 v4.0.0 // indirect
+	github.com/marten-seemann/tcp v0.0.0-20210406111302-dfbc87cc63fd // indirect
+	github.com/mikioh/tcpinfo v0.0.0-20190314235526-30a79bb1804b // indirect
+	github.com/mikioh/tcpopt v0.0.0-20190314235656-172688c1accc // indirect
+	github.com/opencontainers/runtime-spec v1.1.0-rc.1 // indirect
+	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/raulk/go-watchdog v1.3.0 // indirect
+	github.com/whyrusleeping/chunker v0.0.0-20181014151217-fe64bd25879f // indirect
+	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
+	go.opencensus.io v0.24.0 // indirect
+	nhooyr.io/websocket v1.8.7 // indirect
 )

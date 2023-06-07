@@ -119,7 +119,7 @@ func (hm *hostModule) Globals(defs ...*vm.HostModuleGlobalDefinition) error {
 }
 
 func (hm *hostModule) Compile() (vm.ModuleInstance, error) {
-	wb := hm.runtime.primitive.NewHostModuleBuilder(hm.name)
+	wb := hm.runtime.runtime.NewHostModuleBuilder(hm.name)
 	// Export functions after translation if needed
 	for name, def := range hm.functions {
 		wb.NewFunctionBuilder().WithFunc(def.handler).Export(name)
