@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"sync"
-	"time"
 
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
@@ -16,11 +15,8 @@ import (
 /*************** Function Instance ***************/
 
 type funcInstance struct {
-	ctx      context.Context
-	ctxC     context.CancelFunc
 	module   *moduleInstance
 	function api.Function
-	timeout  time.Duration
 }
 
 /*************** Host Module ***************/
@@ -60,6 +56,7 @@ type instance struct {
 
 /*************** Module Instance ***************/
 type moduleInstance struct {
+	parent *runtime
 	module api.Module
 	ctx    context.Context
 }
@@ -75,8 +72,6 @@ type runtime struct {
 
 	wasiStartError error
 	wasiStartDone  chan bool
-
-	lock sync.RWMutex
 }
 
 /*************** Service ***************/

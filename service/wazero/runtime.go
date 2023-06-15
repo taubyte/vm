@@ -12,7 +12,7 @@ import (
 )
 
 func (r *runtime) Close() error {
-	if err := r.runtime.Close(context.TODO()); err != nil {
+	if err := r.runtime.Close(r.instance.ctx.Context()); err != nil {
 		return err
 	}
 
@@ -68,8 +68,6 @@ func (r *runtime) Attach(plugin vm.Plugin) (vm.PluginInstance, vm.ModuleInstance
 }
 
 func (r *runtime) Module(name string) (vm.ModuleInstance, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
 	return r.module(name)
 }
 
@@ -79,7 +77,6 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 		r.instance.lock.RLock()
 		module, ok := r.instance.deps[name]
 		r.instance.lock.RUnlock()
-
 		var err error
 		if !ok {
 			module, err = r.instance.service.Source().Module(r.instance.ctx, name)
@@ -92,7 +89,6 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 			r.instance.lock.Unlock()
 		}
 
-		// handle imports
 		for _, dep := range module.Imports() {
 			if dep == "env" {
 				continue
@@ -104,7 +100,6 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 
 		}
 
-		// then start
 		err = r.instantiate(name, module)
 		if err != nil {
 			return nil, fmt.Errorf("creating an instance of module `%s` failed with: %s", name, err)
@@ -114,10 +109,10 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 		if modInst == nil {
 			return nil, fmt.Errorf("unknown error with module `%s`", name)
 		}
-
 	}
 
 	return &moduleInstance{
+		parent: r,
 		module: modInst,
 		ctx:    r.ctx,
 	}, nil
@@ -150,22 +145,21 @@ func (r *runtime) instantiate(name string, module vm.SourceModule) error {
 		WithSysWalltime().
 		WithSysNanotime()
 
-	// wazero instance will source the instance in it's source
-	// (which is diffrent from our source as it sources instances)
 	m, err := r.runtime.InstantiateModule(r.ctx, compiled, config)
 	if err != nil {
 		return fmt.Errorf("instantiating compiled module `%s` failed with: %s", name, err)
 	}
 
-	// execute _start and keep it running as long as the module is running
-	// this ensures that if the language has a runtime, it'll be running fine
 	if _start := m.ExportedFunction("_start"); _start != nil {
 		if module.ImportsFunction("env", "_ready") {
 			go func() {
 				_, r.wasiStartError = _start.Call(r.ctx)
+				if r.wasiStartError != nil {
+					r.wasiStartDone <- false
+				}
 			}()
 
-			// wait for any runtime initialization
+			// TODO: Handle Context
 			<-r.wasiStartDone
 		} else {
 			_start.Call(r.ctx)
@@ -179,7 +173,7 @@ func (r *runtime) defaultModuleFunctions() []*vm.HostModuleFunctionDefinition {
 	return []*vm.HostModuleFunctionDefinition{
 		{
 			Name: "_ready",
-			Handler: func(ctx context.Context) {
+			Handler: func(ctx context.Context, module vm.Module) {
 				r.wasiStartDone <- true
 				<-r.ctx.Done()
 			},
@@ -187,7 +181,17 @@ func (r *runtime) defaultModuleFunctions() []*vm.HostModuleFunctionDefinition {
 		{
 			Name: "_sleep",
 			Handler: func(ctx context.Context, dur int64) {
-				time.Sleep(time.Duration(dur))
+				select {
+				case <-time.After(time.Duration(dur)):
+				case <-ctx.Done():
+				}
+			},
+		},
+		{
+			Name: "_log",
+			Handler: func(ctx context.Context, module vm.Module, data uint32, dataLen uint32) {
+				msgBuf, _ := module.Memory().Read(data, dataLen)
+				fmt.Println(string(msgBuf))
 			},
 		},
 	}

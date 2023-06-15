@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/taubyte/go-interfaces/vm"
 	functionSpec "github.com/taubyte/go-specs/function"
@@ -22,6 +23,33 @@ var (
 	f64RetVal float64
 
 	controlRetVal string = "hello world"
+
+	mockMemoryDef = &vm.HostModuleMemoryDefinition{
+		Name: "mock",
+		Pages: struct {
+			Min   uint64
+			Max   uint64
+			Maxed bool
+		}{
+			Min:   0,
+			Max:   10,
+			Maxed: false,
+		},
+	}
+
+	mockGlobalDef = &vm.HostModuleGlobalDefinition{
+		Name:  "mock",
+		Value: "hello_world",
+	}
+
+	testFunc = &vm.HostModuleFunctionDefinition{
+		Name: "_test",
+		Handler: func(ctx context.Context, val uint32) uint32 {
+			return val
+		},
+	}
+
+	testTimeout = 15 * time.Second
 )
 
 func newService() (vm.Context, vm.Service, error) {
@@ -112,7 +140,7 @@ func callFuncs(functionNames []string) error {
 	}
 
 	for name, function := range functions {
-		ret := function.Call(theAnswer)
+		ret := function.Call(testTimeout, theAnswer)
 		if ret.Error() != nil {
 			return err
 		}
@@ -168,29 +196,4 @@ func assertError(t *testing.T, err error) {
 		t.Error("expected error")
 		t.FailNow()
 	}
-}
-
-var mockMemoryDef = &vm.HostModuleMemoryDefinition{
-	Name: "mock",
-	Pages: struct {
-		Min   uint64
-		Max   uint64
-		Maxed bool
-	}{
-		Min:   0,
-		Max:   10,
-		Maxed: false,
-	},
-}
-
-var mockGlobalDef = &vm.HostModuleGlobalDefinition{
-	Name:  "mock",
-	Value: "hello_world",
-}
-
-var testFunc = &vm.HostModuleFunctionDefinition{
-	Name: "_test",
-	Handler: func(ctx context.Context, val uint32) uint32 {
-		return val
-	},
 }

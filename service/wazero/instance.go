@@ -17,7 +17,7 @@ func (i *instance) Runtime(hostDef *vm.HostModuleDefinitions) (vm.Runtime, error
 	rt := helpers.NewRuntime(i.ctx.Context(), i.config)
 	r := &runtime{
 		instance:      i,
-		wasiStartDone: make(chan bool, 1),
+		wasiStartDone: make(chan bool),
 		runtime:       rt,
 	}
 

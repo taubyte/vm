@@ -14,13 +14,7 @@ import (
 
 var _ vm.FunctionInstance = &funcInstance{}
 
-func (f *funcInstance) Timeout(timeout time.Duration) vm.FunctionInstance {
-	f.timeout = timeout
-	f.ctx, f.ctxC = context.WithTimeout(f.ctx, f.timeout)
-	return f
-}
-
-func (f *funcInstance) Call(args ...interface{}) vm.Return {
+func (f *funcInstance) Call(timeout time.Duration, args ...interface{}) vm.Return {
 	wasm_args, err := f.golangToWasm(args)
 	if err != nil {
 		return &wasmReturn{
@@ -28,8 +22,10 @@ func (f *funcInstance) Call(args ...interface{}) vm.Return {
 		}
 	}
 
+	ctx, ctxC := context.WithTimeout(f.module.ctx, timeout)
+	defer ctxC()
 	rtypes := f.function.Definition().ResultTypes() // TODO: cache this in function
-	returns, err := f.function.Call(f.ctx, wasm_args...)
+	returns, err := f.function.Call(ctx, wasm_args...)
 	if err != nil {
 		return &wasmReturn{
 			err: err,

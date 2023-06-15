@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/taubyte/go-interfaces/vm"
@@ -19,8 +18,6 @@ func (m *moduleInstance) Function(name string) (vm.FunctionInstance, error) {
 		module:   m,
 		function: funcInst,
 	}
-
-	f.ctx, f.ctxC = context.WithCancel(m.ctx)
 
 	return f, nil
 }
