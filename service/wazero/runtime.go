@@ -89,6 +89,7 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 			r.instance.lock.Unlock()
 		}
 
+		// TODO: Compiled module L122 should have deps. Use that instead of this.
 		for _, dep := range module.Imports() {
 			if dep == "env" {
 				continue
@@ -97,7 +98,6 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 			if err != nil {
 				return nil, fmt.Errorf("loading module `%s` dependency `%s` failed with: %s", name, dep, err)
 			}
-
 		}
 
 		err = r.instantiate(name, module)
@@ -119,19 +119,9 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 }
 
 func (r *runtime) instantiate(name string, module vm.SourceModule) error {
-	r.instance.lock.RLock()
-	compiled, ok := r.instance.compileMap[name]
-	r.instance.lock.RUnlock()
-	if !ok {
-		var err error
-		compiled, err = r.runtime.CompileModule(r.ctx, module.Source())
-		if err != nil {
-			return fmt.Errorf("compiling module `%s` failed with: %s", name, err)
-		}
-
-		r.instance.lock.Lock()
-		r.instance.compileMap[name] = compiled
-		r.instance.lock.Unlock()
+	compiled, err := r.runtime.CompileModule(r.ctx, module.Source())
+	if err != nil {
+		return fmt.Errorf("getting compiled module failed with: %s", err)
 	}
 
 	config := wazero.

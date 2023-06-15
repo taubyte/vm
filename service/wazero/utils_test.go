@@ -140,7 +140,7 @@ func callFuncs(functionNames []string) error {
 	}
 
 	for name, function := range functions {
-		ret := function.Call(testTimeout, theAnswer)
+		ret := function.Call(context.TODO(), theAnswer)
 		if ret.Error() != nil {
 			return err
 		}

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -104,19 +105,19 @@ func TestRuntimeCall(t *testing.T) {
 
 	// Coverage
 
-	ret := fi.Call(testTimeout, float64(42))
+	ret := fi.Call(context.TODO(), float64(42))
 	assert.NilError(t, ret.Error())
 
-	ret = fi.Call(testTimeout, float32(42))
+	ret = fi.Call(context.TODO(), float32(42))
 	assert.NilError(t, ret.Error())
 
-	ret = fi.Call(testTimeout, int(42))
+	ret = fi.Call(context.TODO(), int(42))
 	assert.NilError(t, ret.Error())
 
 	// Failures
 
 	// Type Error: String is not supported
-	ret = fi.Call(testTimeout, "string")
+	ret = fi.Call(context.TODO(), "string")
 	assertError(t, ret.Error())
 }
 
@@ -124,7 +125,7 @@ func TestReflectFailures(t *testing.T) {
 	functions, err := newFuncs([]string{"tou32", "tof64"})
 	assert.NilError(t, err)
 
-	retu32 := functions["tou32"].Call(testTimeout, theAnswer)
+	retu32 := functions["tou32"].Call(context.TODO(), theAnswer)
 	assert.NilError(t, retu32.Error())
 
 	err = retu32.Reflect(&f32RetVal)
@@ -133,7 +134,7 @@ func TestReflectFailures(t *testing.T) {
 	retu32.Reflect(&f64RetVal)
 	assertError(t, err)
 
-	retf64 := functions["tof64"].Call(testTimeout, theAnswer)
+	retf64 := functions["tof64"].Call(context.TODO(), theAnswer)
 	assert.NilError(t, retf64.Error())
 
 	err = retf64.Reflect(&u32RetVal)

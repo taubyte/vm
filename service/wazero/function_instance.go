@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"reflect"
-	"time"
 
 	"github.com/taubyte/go-interfaces/vm"
 )
@@ -14,7 +13,7 @@ import (
 
 var _ vm.FunctionInstance = &funcInstance{}
 
-func (f *funcInstance) Call(timeout time.Duration, args ...interface{}) vm.Return {
+func (f *funcInstance) Call(ctx context.Context, args ...interface{}) vm.Return {
 	wasm_args, err := f.golangToWasm(args)
 	if err != nil {
 		return &wasmReturn{
@@ -22,8 +21,6 @@ func (f *funcInstance) Call(timeout time.Duration, args ...interface{}) vm.Retur
 		}
 	}
 
-	ctx, ctxC := context.WithTimeout(f.module.ctx, timeout)
-	defer ctxC()
 	rtypes := f.function.Definition().ResultTypes() // TODO: cache this in function
 	returns, err := f.function.Call(ctx, wasm_args...)
 	if err != nil {

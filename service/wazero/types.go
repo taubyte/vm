@@ -43,15 +43,14 @@ type hostModule struct {
 /*************** Instance ***************/
 
 type instance struct {
-	ctx        vm.Context
-	service    vm.Service
-	lock       sync.RWMutex
-	fs         afero.Fs
-	config     *vm.Config
-	output     *bytes.Buffer
-	outputErr  *bytes.Buffer
-	compileMap map[string]wazero.CompiledModule
-	deps       map[string]vm.SourceModule
+	ctx       vm.Context
+	service   vm.Service
+	lock      sync.RWMutex
+	fs        afero.Fs
+	config    *vm.Config
+	output    *bytes.Buffer
+	outputErr *bytes.Buffer
+	deps      map[string]vm.SourceModule
 }
 
 /*************** Module Instance ***************/
