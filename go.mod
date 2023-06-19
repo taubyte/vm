@@ -9,6 +9,7 @@ replace (
 	bitbucket.org/taubyte/dreamland => ../dreamland
 	bitbucket.org/taubyte/dreamland-cli => ../dreamland-cli
 	bitbucket.org/taubyte/dreamland-test => ../dreamland-test
+	bitbucket.org/taubyte/go-dreamland-http => ../go-dreamland-http
 	bitbucket.org/taubyte/go-node-counters => ../go-node-counters
 	bitbucket.org/taubyte/go-node-database => ../go-node-database
 	bitbucket.org/taubyte/go-node-http => ../go-node-http
