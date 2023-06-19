@@ -66,9 +66,6 @@ type runtime struct {
 	instance *instance
 	runtime  wazero.Runtime
 
-	ctx  context.Context
-	ctxC context.CancelFunc
-
 	wasiStartError error
 	wasiStartDone  chan bool
 }

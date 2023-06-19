@@ -90,15 +90,15 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 		}
 
 		// TODO: Compiled module L122 should have deps. Use that instead of this.
-		for _, dep := range module.Imports() {
-			if dep == "env" {
-				continue
-			}
-			_, err := r.module(dep)
-			if err != nil {
-				return nil, fmt.Errorf("loading module `%s` dependency `%s` failed with: %s", name, dep, err)
-			}
-		}
+		// for _, dep := range module.Imports() {
+		// 	if dep == "env" {
+		// 		continue
+		// 	}
+		// 	_, err := r.module(dep)
+		// 	if err != nil {
+		// 		return nil, fmt.Errorf("loading module `%s` dependency `%s` failed with: %s", name, dep, err)
+		// 	}
+		// }
 
 		err = r.instantiate(name, module)
 		if err != nil {
@@ -114,12 +114,12 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 	return &moduleInstance{
 		parent: r,
 		module: modInst,
-		ctx:    r.ctx,
+		ctx:    r.instance.ctx.Context(),
 	}, nil
 }
 
 func (r *runtime) instantiate(name string, module vm.SourceModule) error {
-	compiled, err := r.runtime.CompileModule(r.ctx, module.Source())
+	compiled, err := r.runtime.CompileModule(r.instance.ctx.Context(), module.Source())
 	if err != nil {
 		return fmt.Errorf("getting compiled module failed with: %s", err)
 	}
@@ -135,7 +135,7 @@ func (r *runtime) instantiate(name string, module vm.SourceModule) error {
 		WithSysWalltime().
 		WithSysNanotime()
 
-	m, err := r.runtime.InstantiateModule(r.ctx, compiled, config)
+	m, err := r.runtime.InstantiateModule(r.instance.ctx.Context(), compiled, config)
 	if err != nil {
 		return fmt.Errorf("instantiating compiled module `%s` failed with: %s", name, err)
 	}
@@ -143,16 +143,15 @@ func (r *runtime) instantiate(name string, module vm.SourceModule) error {
 	if _start := m.ExportedFunction("_start"); _start != nil {
 		if module.ImportsFunction("env", "_ready") {
 			go func() {
-				_, r.wasiStartError = _start.Call(r.ctx)
+				_, r.wasiStartError = _start.Call(r.instance.ctx.Context())
 				if r.wasiStartError != nil {
 					r.wasiStartDone <- false
 				}
 			}()
 
-			// TODO: Handle Context
 			<-r.wasiStartDone
 		} else {
-			_start.Call(r.ctx)
+			_start.Call(r.instance.ctx.Context())
 		}
 	}
 
@@ -165,7 +164,6 @@ func (r *runtime) defaultModuleFunctions() []*vm.HostModuleFunctionDefinition {
 			Name: "_ready",
 			Handler: func(ctx context.Context, module vm.Module) {
 				r.wasiStartDone <- true
-				<-r.ctx.Done()
 			},
 		},
 		{

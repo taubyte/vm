@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"fmt"
 	"io"
 
@@ -20,13 +19,6 @@ func (i *instance) Runtime(hostDef *vm.HostModuleDefinitions) (vm.Runtime, error
 		wasiStartDone: make(chan bool),
 		runtime:       rt,
 	}
-
-	r.ctx, r.ctxC = context.WithCancel(i.ctx.Context())
-
-	go func() {
-		<-r.ctx.Done()
-		r.Close()
-	}()
 
 	hm, err := r.Expose("env")
 	if err != nil {
@@ -57,7 +49,7 @@ func (i *instance) Runtime(hostDef *vm.HostModuleDefinitions) (vm.Runtime, error
 
 	}
 
-	if _, err = wasi.NewBuilder(r.runtime).Instantiate(r.ctx); err != nil {
+	if _, err = wasi.NewBuilder(r.runtime).Instantiate(r.instance.ctx.Context()); err != nil {
 		return nil, fmt.Errorf("instantiating host module failed with: %s", err)
 	}
 
