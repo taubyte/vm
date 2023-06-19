@@ -29,6 +29,7 @@ replace (
 	bitbucket.org/taubyte/patrick => ../patrick
 	bitbucket.org/taubyte/seer => ../seer
 	bitbucket.org/taubyte/seer-p2p-client => ../seer-p2p-client
+	bitbucket.org/taubyte/spore-drive => ../spore-drive
 	bitbucket.org/taubyte/tns => ../tns
 	bitbucket.org/taubyte/tns-p2p-client => ../tns-p2p-client
 	bitbucket.org/taubyte/vm-test-examples => ../vm-test-examples
