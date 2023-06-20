@@ -2,58 +2,13 @@ module github.com/taubyte/vm
 
 go 1.19
 
-replace (
-	bitbucket.org/taubyte/auth => ../auth
-	bitbucket.org/taubyte/billing => ../billing
-	bitbucket.org/taubyte/config-compiler => ../config-compiler
-	bitbucket.org/taubyte/console => ../console
-	bitbucket.org/taubyte/dreamland => ../dreamland
-	bitbucket.org/taubyte/dreamland-cli => ../dreamland-cli
-	bitbucket.org/taubyte/dreamland-test => ../dreamland-test
-	bitbucket.org/taubyte/go-dreamland-http => ../go-dreamland-http
-	bitbucket.org/taubyte/go-node-counters => ../go-node-counters
-	bitbucket.org/taubyte/go-node-database => ../go-node-database
-	bitbucket.org/taubyte/go-node-http => ../go-node-http
-	bitbucket.org/taubyte/go-node-ipfs => ../go-node-ipfs
-	bitbucket.org/taubyte/go-node-p2p => ../go-node-p2p
-	bitbucket.org/taubyte/go-node-pubsub => ../go-node-pubsub
-	bitbucket.org/taubyte/go-node-smartops => ../go-node-smartops
-	bitbucket.org/taubyte/go-node-storage => ../go-node-storage
-	bitbucket.org/taubyte/go-node-tvm => ../go-node-tvm
-	bitbucket.org/taubyte/hoarder => ../hoarder
-	bitbucket.org/taubyte/http-auto => ../http-auto
-	bitbucket.org/taubyte/kvdb => ../kvdb
-	bitbucket.org/taubyte/monkey => ../monkey
-	bitbucket.org/taubyte/mycelium => ../mycelium
-	bitbucket.org/taubyte/node => ../node
-	bitbucket.org/taubyte/p2p => ../p2p
-	bitbucket.org/taubyte/patrick => ../patrick
-	bitbucket.org/taubyte/q-node => ../q-node
-	bitbucket.org/taubyte/seer => ../seer
-	bitbucket.org/taubyte/seer-p2p-client => ../seer-p2p-client
-	bitbucket.org/taubyte/spore-drive => ../spore-drive
-	bitbucket.org/taubyte/tns => ../tns
-	bitbucket.org/taubyte/tns-p2p-client => ../tns-p2p-client
-	bitbucket.org/taubyte/vm-test-examples => ../vm-test-examples
-	github.com/ipfs/go-block-format => github.com/ipfs/go-block-format v0.1.1
-	github.com/taubyte/go-interfaces => ../go-interfaces
-	github.com/taubyte/go-sdk => ../go-sdk
-	github.com/taubyte/go-sdk-symbols => ../go-sdk-symbols
-	github.com/taubyte/go-specs => ../go-specs
-	github.com/taubyte/http => ../http
-	github.com/taubyte/utils => ../utils
-	github.com/taubyte/vm => ../vm
-	github.com/taubyte/vm-plugins => ../vm-plugins
-	github.com/taubyte/vm-wasm-utils => ../vm-wasm-utils
-)
-
 require (
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multiaddr v0.9.0
 	github.com/spf13/afero v1.9.5
-	github.com/taubyte/go-interfaces v0.1.1
-	github.com/taubyte/go-specs v0.10.2-pre
-	github.com/taubyte/utils v0.1.5
+	github.com/taubyte/go-interfaces v0.2.0-pre
+	github.com/taubyte/go-specs v0.10.5-pre
+	github.com/taubyte/utils v0.1.6-pre.v2
 	github.com/tetratelabs/wazero v1.0.3
 	go4.org v0.0.0-20180809161055-417644f6feb5
 	gotest.tools/v3 v3.4.0
@@ -122,7 +77,6 @@ require (
 	github.com/ipfs/go-ipld-cbor v0.0.6 // indirect
 	github.com/ipfs/go-ipld-format v0.4.0 // indirect
 	github.com/ipfs/go-ipld-legacy v0.1.1 // indirect
-	github.com/ipfs/go-libipfs v0.3.0 // indirect
 	github.com/ipfs/go-log v1.0.5 // indirect
 	github.com/ipfs/go-log/v2 v2.5.1 // indirect
 	github.com/ipfs/go-metrics-interface v0.0.1 // indirect
