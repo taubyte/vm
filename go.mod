@@ -6,6 +6,7 @@ replace (
 	bitbucket.org/taubyte/auth => ../auth
 	bitbucket.org/taubyte/billing => ../billing
 	bitbucket.org/taubyte/config-compiler => ../config-compiler
+	bitbucket.org/taubyte/console => ../console
 	bitbucket.org/taubyte/dreamland => ../dreamland
 	bitbucket.org/taubyte/dreamland-cli => ../dreamland-cli
 	bitbucket.org/taubyte/dreamland-test => ../dreamland-test
@@ -27,6 +28,7 @@ replace (
 	bitbucket.org/taubyte/node => ../node
 	bitbucket.org/taubyte/p2p => ../p2p
 	bitbucket.org/taubyte/patrick => ../patrick
+	bitbucket.org/taubyte/q-node => ../q-node
 	bitbucket.org/taubyte/seer => ../seer
 	bitbucket.org/taubyte/seer-p2p-client => ../seer-p2p-client
 	bitbucket.org/taubyte/spore-drive => ../spore-drive
@@ -45,26 +47,18 @@ replace (
 	github.com/taubyte/vm-wasm-utils => ../vm-wasm-utils
 )
 
-// Taubyte Direct Imports
 require (
+	github.com/ipfs/go-cid v0.4.1
+	github.com/multiformats/go-multiaddr v0.9.0
+	github.com/spf13/afero v1.9.5
 	github.com/taubyte/go-interfaces v0.1.1
 	github.com/taubyte/go-specs v0.10.2-pre
 	github.com/taubyte/utils v0.1.5
-)
-
-// Direct Imports
-require (
-	github.com/ipfs/go-cid v0.4.1
-	github.com/spf13/afero v1.9.5
 	github.com/tetratelabs/wazero v1.0.3
 	go4.org v0.0.0-20180809161055-417644f6feb5
 	gotest.tools/v3 v3.4.0
 )
 
-// Taubyte Indirect Imports
-require github.com/taubyte/domain-validation v1.0.0 // indirect
-
-// Indirect Imports
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
@@ -111,7 +105,7 @@ require (
 	github.com/gxed/hashland/keccakpg v0.0.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
+	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.2 // indirect
 	github.com/hsanjuan/ipfs-lite v1.7.0 // indirect
 	github.com/huin/goupnp v1.1.0 // indirect
@@ -128,6 +122,7 @@ require (
 	github.com/ipfs/go-ipld-cbor v0.0.6 // indirect
 	github.com/ipfs/go-ipld-format v0.4.0 // indirect
 	github.com/ipfs/go-ipld-legacy v0.1.1 // indirect
+	github.com/ipfs/go-libipfs v0.3.0 // indirect
 	github.com/ipfs/go-log v1.0.5 // indirect
 	github.com/ipfs/go-log/v2 v2.5.1 // indirect
 	github.com/ipfs/go-metrics-interface v0.0.1 // indirect
@@ -171,7 +166,6 @@ require (
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/multiformats/go-base32 v0.1.0 // indirect
 	github.com/multiformats/go-base36 v0.2.0 // indirect
-	github.com/multiformats/go-multiaddr v0.9.0
 	github.com/multiformats/go-multiaddr-dns v0.3.1 // indirect
 	github.com/multiformats/go-multiaddr-fmt v0.1.0 // indirect
 	github.com/multiformats/go-multibase v0.2.0 // indirect
@@ -182,7 +176,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.9.2 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
-	github.com/opencontainers/runtime-spec v1.1.0-rc.1 // indirect
+	github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/otiai10/copy v1.11.0 // indirect
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
@@ -203,6 +197,7 @@ require (
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/taubyte/domain-validation v1.0.0 // indirect
 	github.com/taubyte/go-simple-container v0.4.2 // indirect
 	github.com/taubyte/go-simple-git v0.2.5 // indirect
 	github.com/whyrusleeping/cbor-gen v0.0.0-20230126041949-52956bd4c9aa // indirect
@@ -237,5 +232,3 @@ require (
 	lukechampine.com/blake3 v1.1.7 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
 )
-
-require github.com/ipfs/go-libipfs v0.3.0 // indirect
