@@ -5,7 +5,6 @@ import (
 	"io"
 
 	"github.com/taubyte/go-interfaces/vm"
-	module "github.com/taubyte/vm/modules/source"
 )
 
 type source struct {
@@ -32,5 +31,5 @@ func (s *source) Module(ctx vm.Context, name string) (vm.SourceModule, error) {
 		return nil, fmt.Errorf("reading module `%s` failed with %w", name, err)
 	}
 
-	return module.New(_source)
+	return _source, nil
 }

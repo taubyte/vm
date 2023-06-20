@@ -24,7 +24,7 @@ func TestSource(t *testing.T) {
 	sourceModule, err := source.Module(ctx, functionSpec.ModuleName(test_utils.TestFunc.Name))
 	assert.NilError(t, err)
 
-	sourceData := sourceModule.Source()
+	sourceData := []byte(sourceModule)
 	assert.DeepEqual(t, fixtures.NonCompressRecursive, sourceData)
 
 	// Test Failures

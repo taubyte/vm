@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/tetratelabs/wazero"
+	api "github.com/tetratelabs/wazero/api"
 )
 
 func (r *runtime) Close() error {
@@ -74,40 +75,41 @@ func (r *runtime) Module(name string) (vm.ModuleInstance, error) {
 func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 	modInst := r.runtime.Module(name)
 	if modInst == nil {
-		r.instance.lock.RLock()
-		module, ok := r.instance.deps[name]
-		r.instance.lock.RUnlock()
-		var err error
-		if !ok {
-			module, err = r.instance.service.Source().Module(r.instance.ctx, name)
-			if err != nil {
-				return nil, fmt.Errorf("loading module `%s` failed with: %s", name, err)
+		module, err := r.instance.service.Source().Module(r.instance.ctx, name)
+		if err != nil {
+			return nil, fmt.Errorf("loading module `%s` failed with: %s", name, err)
+		}
+
+		compiled, err := r.runtime.CompileModule(r.instance.ctx.Context(), module)
+		if err != nil {
+			return nil, fmt.Errorf("getting compiled module failed with: %s", err)
+		}
+
+		deps := make(map[string]struct{})
+		hasReady := false
+		for _, def := range compiled.ImportedFunctions() {
+			dep, fx, _ := def.Import()
+			if dep == "env" {
+				if fx == "_ready" {
+					hasReady = true
+				}
+				continue
 			}
 
-			r.instance.lock.Lock()
-			r.instance.deps[name] = module
-			r.instance.lock.Unlock()
+			deps[dep] = struct{}{}
+
 		}
 
-		// TODO: Compiled module L122 should have deps. Use that instead of this.
-		// for _, dep := range module.Imports() {
-		// 	if dep == "env" {
-		// 		continue
-		// 	}
-		// 	_, err := r.module(dep)
-		// 	if err != nil {
-		// 		return nil, fmt.Errorf("loading module `%s` dependency `%s` failed with: %s", name, dep, err)
-		// 	}
-		// }
+		for dep := range deps {
+			_, err := r.module(dep)
+			if err != nil {
+				return nil, fmt.Errorf("loading module `%s` dependency `%s` failed with: %s", name, dep, err)
+			}
+		}
 
-		err = r.instantiate(name, module)
+		modInst, err = r.instantiate(name, compiled, hasReady)
 		if err != nil {
 			return nil, fmt.Errorf("creating an instance of module `%s` failed with: %s", name, err)
-		}
-
-		modInst = r.runtime.Module(name)
-		if modInst == nil {
-			return nil, fmt.Errorf("unknown error with module `%s`", name)
 		}
 	}
 
@@ -118,11 +120,7 @@ func (r *runtime) module(name string) (vm.ModuleInstance, error) {
 	}, nil
 }
 
-func (r *runtime) instantiate(name string, module vm.SourceModule) error {
-	compiled, err := r.runtime.CompileModule(r.instance.ctx.Context(), module.Source())
-	if err != nil {
-		return fmt.Errorf("getting compiled module failed with: %s", err)
-	}
+func (r *runtime) instantiate(name string, compiled wazero.CompiledModule, hasReady bool) (api.Module, error) {
 
 	config := wazero.
 		NewModuleConfig().
@@ -137,11 +135,11 @@ func (r *runtime) instantiate(name string, module vm.SourceModule) error {
 
 	m, err := r.runtime.InstantiateModule(r.instance.ctx.Context(), compiled, config)
 	if err != nil {
-		return fmt.Errorf("instantiating compiled module `%s` failed with: %s", name, err)
+		return nil, fmt.Errorf("instantiating compiled module `%s` failed with: %s", name, err)
 	}
 
 	if _start := m.ExportedFunction("_start"); _start != nil {
-		if module.ImportsFunction("env", "_ready") {
+		if hasReady {
 			go func() {
 				_, r.wasiStartError = _start.Call(r.instance.ctx.Context())
 				if r.wasiStartError != nil {
@@ -155,7 +153,7 @@ func (r *runtime) instantiate(name string, module vm.SourceModule) error {
 		}
 	}
 
-	return nil
+	return m, nil
 }
 
 func (r *runtime) defaultModuleFunctions() []*vm.HostModuleFunctionDefinition {

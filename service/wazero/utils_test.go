@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/taubyte/go-interfaces/vm"
 	functionSpec "github.com/taubyte/go-specs/function"
@@ -48,8 +47,6 @@ var (
 			return val
 		},
 	}
-
-	testTimeout = 15 * time.Second
 )
 
 func newService() (vm.Context, vm.Service, error) {

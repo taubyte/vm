@@ -50,7 +50,6 @@ require (
 	github.com/taubyte/go-interfaces v0.1.1
 	github.com/taubyte/go-specs v0.10.2-pre
 	github.com/taubyte/utils v0.1.5
-	github.com/taubyte/vm-wasm-utils v1.0.2
 )
 
 // Direct Imports

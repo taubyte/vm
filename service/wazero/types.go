@@ -7,7 +7,6 @@ import (
 
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
-	wasm "github.com/taubyte/vm-wasm-utils"
 	"github.com/tetratelabs/wazero"
 	"github.com/tetratelabs/wazero/api"
 )
@@ -82,6 +81,6 @@ type service struct {
 
 type wasmReturn struct {
 	err    error
-	types  []wasm.ValueType
+	types  []api.ValueType
 	values []uint64
 }
