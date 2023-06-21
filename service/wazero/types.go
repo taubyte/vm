@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"context"
 	"sync"
-	"time"
 
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
-	wasm "github.com/taubyte/vm-wasm-utils"
 	"github.com/tetratelabs/wazero"
 	"github.com/tetratelabs/wazero/api"
 )
@@ -16,11 +14,8 @@ import (
 /*************** Function Instance ***************/
 
 type funcInstance struct {
-	ctx      context.Context
-	ctxC     context.CancelFunc
 	module   *moduleInstance
 	function api.Function
-	timeout  time.Duration
 }
 
 /*************** Host Module ***************/
@@ -47,20 +42,19 @@ type hostModule struct {
 /*************** Instance ***************/
 
 type instance struct {
-	ctx        vm.Context
-	service    vm.Service
-	lock       sync.RWMutex
-	fs         afero.Fs
-	output     *bytes.Buffer
-	outputErr  *bytes.Buffer
-	compileMap map[string]wazero.CompiledModule
-	deps       map[string]vm.SourceModule
-
-	runtime *runtime
+	ctx       vm.Context
+	service   vm.Service
+	lock      sync.RWMutex
+	fs        afero.Fs
+	config    *vm.Config
+	output    *bytes.Buffer
+	outputErr *bytes.Buffer
+	deps      map[string]vm.SourceModule
 }
 
 /*************** Module Instance ***************/
 type moduleInstance struct {
+	parent *runtime
 	module api.Module
 	ctx    context.Context
 }
@@ -68,13 +62,11 @@ type moduleInstance struct {
 /*************** Runtime ***************/
 
 type runtime struct {
-	primitive      wazero.Runtime
+	instance *instance
+	runtime  wazero.Runtime
+
 	wasiStartError error
 	wasiStartDone  chan bool
-	lock           sync.RWMutex
-
-	ctx  context.Context
-	ctxC context.CancelFunc
 }
 
 /*************** Service ***************/
@@ -89,6 +81,6 @@ type service struct {
 
 type wasmReturn struct {
 	err    error
-	types  []wasm.ValueType
+	types  []api.ValueType
 	values []uint64
 }

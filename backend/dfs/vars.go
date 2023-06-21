@@ -4,5 +4,5 @@ import "time"
 
 var (
 	Scheme     = "dfs"
-	GetTimeout = 3 * time.Second
+	GetTimeout = 30 * time.Second
 )

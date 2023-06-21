@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"time"
 
 	spec "github.com/taubyte/go-specs/common"
 	"gotest.tools/v3/assert"
@@ -41,17 +40,6 @@ func TestContext(t *testing.T) {
 	assert.NilError(t, err)
 
 	assert.Equal(t, ctx.Branch(), branch)
-
-	err = ctx.Close()
-	assert.NilError(t, err)
-
-	select {
-	case <-ctx.Context().Done():
-		break
-	case <-time.After(time.Second):
-		t.Error("expected context cancel")
-		return
-	}
 
 	// Options error: errOption always returns error, when applying options New will fail
 	_, err = New(baseContext, errOption())

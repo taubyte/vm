@@ -17,3 +17,8 @@ type zWasmReadCloser struct {
 	dag        io.ReadCloser
 	unCompress io.ReadCloser
 }
+
+type zipReadCloser struct {
+	io.ReadCloser
+	parent io.Closer
+}

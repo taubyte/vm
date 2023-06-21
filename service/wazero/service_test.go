@@ -1,9 +1,9 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"testing"
-	"time"
 
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/go-interfaces/vm/mocks"
@@ -27,7 +27,7 @@ func TestModuleFunctionFailure(t *testing.T) {
 }
 
 func TestInstance(t *testing.T) {
-	instance, err := newBasicInstance()
+	instance, err := newInstance()
 	assert.NilError(t, err)
 
 	if instance.Stderr() == nil {
@@ -46,16 +46,15 @@ func TestInstance(t *testing.T) {
 		t.Error("context is nil")
 	}
 
-	// runtime load error
-	_, _, err = instance.Attach(nil)
-	assertError(t, err)
-
 	err = instance.Close()
 	assert.NilError(t, err)
 }
 
 func TestRuntime(t *testing.T) {
-	instance, err := newLoadedInstance()
+	instance, err := newInstance()
+	assert.NilError(t, err)
+
+	_, err = instance.Runtime(nil)
 	assert.NilError(t, err)
 
 	if instance.Stderr() == nil {
@@ -70,21 +69,26 @@ func TestRuntime(t *testing.T) {
 	assert.NilError(t, err)
 
 	// duplicate function error
-	err = instance.Load(&vm.HostModuleDefinitions{Functions: []*vm.HostModuleFunctionDefinition{testFunc, testFunc}})
+	_, err = instance.Runtime(
+		&vm.HostModuleDefinitions{
+			Functions: []*vm.HostModuleFunctionDefinition{testFunc, testFunc},
+		})
 	assertError(t, err)
 
 	// duplicate global error
-	err = instance.Load(&vm.HostModuleDefinitions{
-		Functions: []*vm.HostModuleFunctionDefinition{testFunc},
-		Globals:   []*vm.HostModuleGlobalDefinition{mockGlobalDef, mockGlobalDef},
-	})
+	_, err = instance.Runtime(
+		&vm.HostModuleDefinitions{
+			Functions: []*vm.HostModuleFunctionDefinition{testFunc},
+			Globals:   []*vm.HostModuleGlobalDefinition{mockGlobalDef, mockGlobalDef},
+		})
 	assertError(t, err)
 
 	// duplicate memory error
-	err = instance.Load(&vm.HostModuleDefinitions{
-		Functions: []*vm.HostModuleFunctionDefinition{testFunc},
-		Memories:  []*vm.HostModuleMemoryDefinition{mockMemoryDef, mockMemoryDef},
-	})
+	_, err = instance.Runtime(
+		&vm.HostModuleDefinitions{
+			Functions: []*vm.HostModuleFunctionDefinition{testFunc},
+			Memories:  []*vm.HostModuleMemoryDefinition{mockMemoryDef, mockMemoryDef},
+		})
 	assertError(t, err)
 
 }
@@ -101,21 +105,19 @@ func TestRuntimeCall(t *testing.T) {
 
 	// Coverage
 
-	ret := fi.Call(float64(42))
+	ret := fi.Call(context.TODO(), float64(42))
 	assert.NilError(t, ret.Error())
 
-	ret = fi.Call(float32(42))
+	ret = fi.Call(context.TODO(), float32(42))
 	assert.NilError(t, ret.Error())
 
-	ret = fi.Call(int(42))
+	ret = fi.Call(context.TODO(), int(42))
 	assert.NilError(t, ret.Error())
-
-	fi.Timeout(10 * time.Second)
 
 	// Failures
 
 	// Type Error: String is not supported
-	ret = fi.Call("string")
+	ret = fi.Call(context.TODO(), "string")
 	assertError(t, ret.Error())
 }
 
@@ -123,7 +125,7 @@ func TestReflectFailures(t *testing.T) {
 	functions, err := newFuncs([]string{"tou32", "tof64"})
 	assert.NilError(t, err)
 
-	retu32 := functions["tou32"].Call(theAnswer)
+	retu32 := functions["tou32"].Call(context.TODO(), theAnswer)
 	assert.NilError(t, retu32.Error())
 
 	err = retu32.Reflect(&f32RetVal)
@@ -132,7 +134,7 @@ func TestReflectFailures(t *testing.T) {
 	retu32.Reflect(&f64RetVal)
 	assertError(t, err)
 
-	retf64 := functions["tof64"].Call(theAnswer)
+	retf64 := functions["tof64"].Call(context.TODO(), theAnswer)
 	assert.NilError(t, retf64.Error())
 
 	err = retf64.Reflect(&u32RetVal)
@@ -158,19 +160,19 @@ func TestReflectFailures(t *testing.T) {
 }
 
 func TestRuntimePlugin(t *testing.T) {
-	instance, err := newLoadedInstance()
+	runtime, err := newBasicRuntime()
 	assert.NilError(t, err)
 
 	plugin := mocks.NewPlugin(false)
-	_, _, err = instance.Attach(plugin)
+	_, _, err = runtime.Attach(plugin)
 	assert.NilError(t, err)
 
 	// nil plugin error
-	_, _, err = instance.Attach(nil)
+	_, _, err = runtime.Attach(nil)
 	assertError(t, err)
 
 	// mock New error
 	plugin = mocks.NewPlugin(true)
-	_, _, err = instance.Attach(plugin)
+	_, _, err = runtime.Attach(plugin)
 	assertError(t, err)
 }

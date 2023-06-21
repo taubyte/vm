@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/taubyte/go-interfaces/vm"
-	utils "github.com/taubyte/vm-wasm-utils/callBridge"
+	callBridge "github.com/taubyte/vm/service/wazero/callBridge"
 	api "github.com/tetratelabs/wazero/api"
 )
 
@@ -46,7 +46,7 @@ func (hm *hostModule) function(def *vm.HostModuleFunctionDefinition) error {
 
 				for i := 0; i < 2; i++ {
 					if len(args) > i && args[i].Kind() == reflect.Interface && args[i].Type().Implements(wazeroModuleType) {
-						args[i] = reflect.ValueOf(utils.New(args[i].Interface().(api.Module)))
+						args[i] = reflect.ValueOf(callBridge.New(args[i].Interface().(api.Module)))
 					}
 				}
 
@@ -119,7 +119,7 @@ func (hm *hostModule) Globals(defs ...*vm.HostModuleGlobalDefinition) error {
 }
 
 func (hm *hostModule) Compile() (vm.ModuleInstance, error) {
-	wb := hm.runtime.primitive.NewHostModuleBuilder(hm.name)
+	wb := hm.runtime.runtime.NewHostModuleBuilder(hm.name)
 	// Export functions after translation if needed
 	for name, def := range hm.functions {
 		wb.NewFunctionBuilder().WithFunc(def.handler).Export(name)

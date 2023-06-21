@@ -22,6 +22,31 @@ var (
 	f64RetVal float64
 
 	controlRetVal string = "hello world"
+
+	mockMemoryDef = &vm.HostModuleMemoryDefinition{
+		Name: "mock",
+		Pages: struct {
+			Min   uint64
+			Max   uint64
+			Maxed bool
+		}{
+			Min:   0,
+			Max:   10,
+			Maxed: false,
+		},
+	}
+
+	mockGlobalDef = &vm.HostModuleGlobalDefinition{
+		Name:  "mock",
+		Value: "hello_world",
+	}
+
+	testFunc = &vm.HostModuleFunctionDefinition{
+		Name: "_test",
+		Handler: func(ctx context.Context, val uint32) uint32 {
+			return val
+		},
+	}
 )
 
 func newService() (vm.Context, vm.Service, error) {
@@ -40,40 +65,45 @@ func newService() (vm.Context, vm.Service, error) {
 	return ctx, New(ctx.Context(), source), nil
 }
 
-func newBasicInstance() (vm.Instance, error) {
+func newInstance() (vm.Instance, error) {
 	ctx, service, err := newService()
 	if err != nil {
 		return nil, err
 	}
 
-	return service.New(ctx)
+	return service.New(ctx, vm.Config{})
 }
 
-func newLoadedInstance() (vm.Instance, error) {
-	instance, err := newBasicInstance()
+func newBasicRuntime() (vm.Runtime, error) {
+	instance, err := newInstance()
 	if err != nil {
 		return nil, err
 	}
 
-	if err := instance.Load(
+	return instance.Runtime(nil)
+}
+
+func newRuntimeWithHostDefs() (vm.Runtime, error) {
+	instance, err := newInstance()
+	if err != nil {
+		return nil, err
+	}
+
+	return instance.Runtime(
 		&vm.HostModuleDefinitions{
 			Functions: []*vm.HostModuleFunctionDefinition{testFunc},
 			Memories:  []*vm.HostModuleMemoryDefinition{mockMemoryDef},
 			Globals:   []*vm.HostModuleGlobalDefinition{mockGlobalDef},
-		}); err != nil {
-		return nil, err
-	}
-
-	return instance, err
+		})
 }
 
 func newModuleInstance() (vm.ModuleInstance, error) {
-	instance, err := newLoadedInstance()
+	runtime, err := newRuntimeWithHostDefs()
 	if err != nil {
 		return nil, err
 	}
 
-	return instance.Module(functionSpec.ModuleName(test_utils.TestFunc.Name))
+	return runtime.Module(functionSpec.ModuleName(test_utils.TestFunc.Name))
 
 }
 
@@ -107,7 +137,7 @@ func callFuncs(functionNames []string) error {
 	}
 
 	for name, function := range functions {
-		ret := function.Call(theAnswer)
+		ret := function.Call(context.TODO(), theAnswer)
 		if ret.Error() != nil {
 			return err
 		}
@@ -163,29 +193,4 @@ func assertError(t *testing.T, err error) {
 		t.Error("expected error")
 		t.FailNow()
 	}
-}
-
-var mockMemoryDef = &vm.HostModuleMemoryDefinition{
-	Name: "mock",
-	Pages: struct {
-		Min   uint64
-		Max   uint64
-		Maxed bool
-	}{
-		Min:   0,
-		Max:   10,
-		Maxed: false,
-	},
-}
-
-var mockGlobalDef = &vm.HostModuleGlobalDefinition{
-	Name:  "mock",
-	Value: "hello_world",
-}
-
-var testFunc = &vm.HostModuleFunctionDefinition{
-	Name: "_test",
-	Handler: func(ctx context.Context, val uint32) uint32 {
-		return val
-	},
 }

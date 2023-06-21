@@ -2,13 +2,27 @@ package helpers
 
 import (
 	"context"
+	"sync"
 
+	"github.com/taubyte/go-interfaces/vm"
 	"github.com/tetratelabs/wazero"
 )
 
-func NewRuntime(ctx context.Context) wazero.Runtime {
+var lock sync.Mutex
+
+func NewRuntime(ctx context.Context, config *vm.Config) wazero.Runtime {
+	lock.Lock()
+	defer lock.Unlock()
+	if config.MemoryLimitPages == 0 {
+		config.MemoryLimitPages = vm.MemoryLimitPages
+	}
+
 	return wazero.NewRuntimeWithConfig(
 		ctx,
-		wazero.NewRuntimeConfig(),
+		wazero.NewRuntimeConfig().
+			WithCloseOnContextDone(true).
+			WithDebugInfoEnabled(true).
+			WithMemoryLimitPages(config.MemoryLimitPages).
+			WithCompilationCache(cache),
 	)
 }
