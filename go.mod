@@ -6,7 +6,7 @@ require (
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multiaddr v0.9.0
 	github.com/spf13/afero v1.9.5
-	github.com/taubyte/go-interfaces v0.2.0-pre
+	github.com/taubyte/go-interfaces v0.2.0-pre.v2
 	github.com/taubyte/go-specs v0.10.5-pre
 	github.com/taubyte/utils v0.1.6-pre.v2
 	github.com/tetratelabs/wazero v1.0.3
