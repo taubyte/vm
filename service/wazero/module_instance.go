@@ -21,3 +21,17 @@ func (m *moduleInstance) Function(name string) (vm.FunctionInstance, error) {
 
 	return f, nil
 }
+
+func (m *moduleInstance) Memory() vm.Memory {
+	return m.module.Memory()
+}
+
+func (m *moduleInstance) Functions() []vm.FunctionDefinition {
+	defMap := m.module.ExportedFunctionDefinitions()
+	defs := make([]vm.FunctionDefinition, len(defMap))
+	for _, def := range defMap {
+		defs = append(defs, def)
+	}
+
+	return defs
+}

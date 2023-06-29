@@ -14,6 +14,8 @@ require (
 	gotest.tools/v3 v3.4.0
 )
 
+replace github.com/taubyte/go-interfaces => ../go-interfaces
+
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect

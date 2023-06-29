@@ -16,6 +16,10 @@ func (r *wasmReturn) Error() error {
 	return r.err
 }
 
+func (r *wasmReturn) Rets() []uint64 {
+	return r.values
+}
+
 func (r *wasmReturn) Reflect(args ...interface{}) error {
 	if r.err != nil {
 		return r.err
