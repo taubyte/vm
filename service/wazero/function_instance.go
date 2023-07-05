@@ -13,6 +13,10 @@ import (
 
 var _ vm.FunctionInstance = &funcInstance{}
 
+func (f *funcInstance) RawCall(ctx context.Context, args ...uint64) ([]uint64, error) {
+	return f.function.Call(ctx, args...)
+}
+
 func (f *funcInstance) Call(ctx context.Context, args ...interface{}) vm.Return {
 	wasm_args, err := f.golangToWasm(args)
 	if err != nil {

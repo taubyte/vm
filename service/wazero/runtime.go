@@ -46,6 +46,11 @@ func (r *runtime) Attach(plugin vm.Plugin) (vm.PluginInstance, vm.ModuleInstance
 		return nil, nil, fmt.Errorf("plugin cannot be nil")
 	}
 
+	pi, err := plugin.New(r.instance)
+	if err != nil {
+		return nil, nil, fmt.Errorf("creating new plugin instance failed with: %s", err)
+	}
+
 	hm := &hostModule{
 		ctx:       r.instance.ctx,
 		name:      plugin.Name(),
@@ -53,11 +58,6 @@ func (r *runtime) Attach(plugin vm.Plugin) (vm.PluginInstance, vm.ModuleInstance
 		functions: make(map[string]functionDef),
 		memories:  make(map[string]memoryPages),
 		globals:   make(map[string]interface{}),
-	}
-
-	pi, err := plugin.New(r.instance)
-	if err != nil {
-		return nil, nil, fmt.Errorf("creating new plugin instance failed with: %s", err)
 	}
 
 	minst, err := pi.Load(hm)
