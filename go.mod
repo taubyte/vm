@@ -6,15 +6,13 @@ require (
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multiaddr v0.9.0
 	github.com/spf13/afero v1.9.5
-	github.com/taubyte/go-interfaces v0.2.0-pre.v2
+	github.com/taubyte/go-interfaces v0.2.2
 	github.com/taubyte/go-specs v0.10.5-pre
 	github.com/taubyte/utils v0.1.6-pre.v2
 	github.com/tetratelabs/wazero v1.0.3
 	go4.org v0.0.0-20180809161055-417644f6feb5
 	gotest.tools/v3 v3.4.0
 )
-
-replace github.com/taubyte/go-interfaces => ../go-interfaces
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
