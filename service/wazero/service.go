@@ -1,7 +1,7 @@
 package service
 
 import (
-	"bytes"
+	"io"
 
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
@@ -9,14 +9,31 @@ import (
 
 var MaxOutputCapacity = 10 * 1024
 
+type pipe struct {
+	io.ReadCloser
+	io.WriteCloser
+	io.Closer
+}
+
+func newPipe() *pipe {
+	p := &pipe{}
+	p.ReadCloser, p.WriteCloser = io.Pipe()
+	return p
+}
+
+func (p *pipe) Close() {
+	p.WriteCloser.Close()
+	p.ReadCloser.Close()
+}
+
 func (s *service) New(ctx vm.Context, config vm.Config) (vm.Instance, error) {
 	r := &instance{
 		ctx:       ctx,
 		service:   s,
 		config:    &config,
 		fs:        afero.NewMemMapFs(),
-		output:    bytes.NewBuffer(make([]byte, 0, MaxOutputCapacity)),
-		outputErr: bytes.NewBuffer(make([]byte, 0, MaxOutputCapacity)),
+		output:    newPipe(),
+		outputErr: newPipe(),
 		deps:      make(map[string]vm.SourceModule, 0),
 	}
 

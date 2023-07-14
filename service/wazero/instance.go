@@ -71,6 +71,8 @@ func (i *instance) Filesystem() afero.Fs {
 func (i *instance) Close() error {
 	i.lock.Lock()
 	defer i.lock.Unlock()
+	i.output.Close()
+	i.outputErr.Close()
 	return nil
 }
 

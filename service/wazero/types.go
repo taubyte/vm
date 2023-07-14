@@ -1,7 +1,6 @@
 package service
 
 import (
-	"bytes"
 	"context"
 	"sync"
 
@@ -47,8 +46,8 @@ type instance struct {
 	lock      sync.RWMutex
 	fs        afero.Fs
 	config    *vm.Config
-	output    *bytes.Buffer
-	outputErr *bytes.Buffer
+	output    *pipe
+	outputErr *pipe
 	deps      map[string]vm.SourceModule
 }
 
