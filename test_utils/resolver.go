@@ -1,8 +1,8 @@
 package test_utils
 
 import (
-	"github.com/taubyte/go-interfaces/services/tns/mocks"
 	"github.com/taubyte/go-interfaces/vm"
+	"github.com/taubyte/odo/protocols/tns/service/mocks"
 
 	"github.com/taubyte/go-specs/common"
 	functionSpec "github.com/taubyte/go-specs/function"

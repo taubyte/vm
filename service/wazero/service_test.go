@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/taubyte/go-interfaces/vm"
-	"github.com/taubyte/go-interfaces/vm/mocks"
+	"github.com/taubyte/vm/service/wazero/mocks"
 	"gotest.tools/v3/assert"
 )
 
