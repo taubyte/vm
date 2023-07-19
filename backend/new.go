@@ -5,8 +5,8 @@ import (
 
 	goHttp "net/http"
 
-	"github.com/taubyte/go-interfaces/p2p/peer"
 	"github.com/taubyte/go-interfaces/vm"
+	"github.com/taubyte/p2p/peer"
 	"github.com/taubyte/vm/backend/dfs"
 	"github.com/taubyte/vm/backend/file"
 	"github.com/taubyte/vm/backend/url"

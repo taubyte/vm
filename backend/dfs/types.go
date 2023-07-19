@@ -3,8 +3,8 @@ package dfs
 import (
 	"io"
 
-	peer "github.com/taubyte/go-interfaces/p2p/peer"
 	"github.com/taubyte/go-interfaces/vm"
+	peer "github.com/taubyte/p2p/peer"
 )
 
 var _ vm.Backend = &backend{}

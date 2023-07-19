@@ -9,9 +9,9 @@ import (
 
 	"github.com/ipfs/go-cid"
 	ma "github.com/multiformats/go-multiaddr"
-	peer "github.com/taubyte/go-interfaces/p2p/peer"
 	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/go-specs/builders/wasm"
+	peer "github.com/taubyte/p2p/peer"
 	"github.com/taubyte/vm/backend/errors"
 	resolv "github.com/taubyte/vm/resolvers/taubyte"
 	"go4.org/readerutil"
