@@ -1,6 +1,8 @@
 package mocks
 
-import "github.com/taubyte/go-interfaces/vm"
+import (
+	"github.com/taubyte/go-interfaces/vm"
+)
 
 type MockedPlugin interface {
 	vm.Plugin
