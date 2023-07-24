@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"github.com/taubyte/go-interfaces/vm"
-	tns "github.com/taubyte/odo/protocols/tns/service/mocks"
+	tns "github.com/taubyte/odo/protocols/tns/mocks"
 	peer "github.com/taubyte/p2p/peer/mocks"
 	loaders "github.com/taubyte/vm/loaders/wazero"
 )
