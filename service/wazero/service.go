@@ -1,8 +1,6 @@
 package service
 
 import (
-	"io"
-
 	"github.com/spf13/afero"
 	"github.com/taubyte/go-interfaces/vm"
 )
@@ -16,16 +14,20 @@ func (s *service) New(ctx vm.Context, config vm.Config) (vm.Instance, error) {
 		deps:    make(map[string]vm.SourceModule, 0),
 	}
 
-	var outputMethod func() io.ReadWriteCloser
 	switch config.Output {
 	case vm.Buffer:
-		outputMethod = newBuffer
+		r.output = newBuffer()
+		r.outputErr = newBuffer()
 	default:
-		outputMethod = newPipe
+		r.output = newPipe()
+		r.outputErr = newPipe()
 	}
 
-	r.output = outputMethod()
-	r.outputErr = outputMethod()
+	go func() {
+		<-ctx.Context().Done()
+		r.output.Close()
+		r.outputErr.Close()
+	}()
 
 	return r, nil
 }
