@@ -3,8 +3,8 @@ package test_utils
 import (
 	"os"
 
-	"github.com/taubyte/go-interfaces/services/tns/mocks"
 	structureSpec "github.com/taubyte/go-specs/structure"
+	"github.com/taubyte/odo/protocols/tns/service/mocks"
 	"github.com/taubyte/utils/id"
 	"github.com/taubyte/vm/context"
 )

@@ -6,12 +6,11 @@ import (
 
 	gocontext "context"
 
-	"github.com/taubyte/go-interfaces/services/tns/mocks"
 	"github.com/taubyte/go-interfaces/vm"
 	functionSpec "github.com/taubyte/go-specs/function"
 	"github.com/taubyte/go-specs/methods"
+	"github.com/taubyte/odo/protocols/tns/service/mocks"
 
-	// "github.com/taubyte/vm/backend/file"
 	"github.com/taubyte/vm/context"
 	"github.com/taubyte/vm/test_utils"
 

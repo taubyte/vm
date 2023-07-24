@@ -5,11 +5,10 @@ import (
 	"io"
 
 	"github.com/taubyte/go-interfaces/vm"
+	peer "github.com/taubyte/p2p/peer/mocks"
 	"github.com/taubyte/vm/backend/dfs"
 	"github.com/taubyte/vm/backend/file"
 	"github.com/taubyte/vm/backend/url"
-
-	peer "github.com/taubyte/go-interfaces/p2p/peer/mocks"
 )
 
 type testBackend struct {
