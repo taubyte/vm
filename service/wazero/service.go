@@ -7,35 +7,25 @@ import (
 	"github.com/taubyte/go-interfaces/vm"
 )
 
-var MaxOutputCapacity = 10 * 1024
-
-type pipe struct {
-	io.ReadCloser
-	io.WriteCloser
-	io.Closer
-}
-
-func newPipe() *pipe {
-	p := &pipe{}
-	p.ReadCloser, p.WriteCloser = io.Pipe()
-	return p
-}
-
-func (p *pipe) Close() {
-	p.WriteCloser.Close()
-	p.ReadCloser.Close()
-}
-
 func (s *service) New(ctx vm.Context, config vm.Config) (vm.Instance, error) {
 	r := &instance{
-		ctx:       ctx,
-		service:   s,
-		config:    &config,
-		fs:        afero.NewMemMapFs(),
-		output:    newPipe(),
-		outputErr: newPipe(),
-		deps:      make(map[string]vm.SourceModule, 0),
+		ctx:     ctx,
+		service: s,
+		config:  &config,
+		fs:      afero.NewMemMapFs(),
+		deps:    make(map[string]vm.SourceModule, 0),
 	}
+
+	var outputMethod func() io.ReadWriteCloser
+	switch config.Output {
+	case vm.Buffer:
+		outputMethod = newBuffer
+	default:
+		outputMethod = newPipe
+	}
+
+	r.output = outputMethod()
+	r.outputErr = outputMethod()
 
 	return r, nil
 }

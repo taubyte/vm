@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"io"
 	"sync"
 
 	"github.com/spf13/afero"
@@ -46,8 +47,8 @@ type instance struct {
 	lock      sync.RWMutex
 	fs        afero.Fs
 	config    *vm.Config
-	output    *pipe
-	outputErr *pipe
+	output    io.ReadWriteCloser
+	outputErr io.ReadWriteCloser
 	deps      map[string]vm.SourceModule
 }
 
