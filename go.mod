@@ -2,23 +2,14 @@ module github.com/taubyte/vm
 
 go 1.19
 
-replace (
-	github.com/taubyte/dreamland => /home/tafkhan/Documents/Work/Taubyte/new/dreamland
-	github.com/taubyte/go-interfaces => /home/tafkhan/Documents/Work/Taubyte/Repos/go-interfaces
-	github.com/taubyte/http => /home/tafkhan/Documents/Work/Taubyte/Repos/http
-	github.com/taubyte/odo => /home/tafkhan/Documents/Work/Taubyte/new/odo
-	github.com/taubyte/p2p => /home/tafkhan/Documents/Work/Taubyte/new/p2p
-	github.com/taubyte/vm => /home/tafkhan/Documents/Work/Taubyte/Repos/vm
-	github.com/taubyte/vm-core-plugins => /home/tafkhan/Documents/Work/Taubyte/Repos/vm-core-plugins
-)
-
 require (
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multiaddr v0.10.1
 	github.com/spf13/afero v1.9.5
-	github.com/taubyte/go-interfaces v0.2.4
+	github.com/taubyte/go-interfaces v0.2.6
 	github.com/taubyte/go-specs v0.10.5
-	github.com/taubyte/p2p v0.9.0
+	github.com/taubyte/odo v0.0.0-20230724194055-439dcb35eaf8
+	github.com/taubyte/p2p v0.9.1
 	github.com/taubyte/utils v0.1.6
 	github.com/tetratelabs/wazero v1.0.3
 	go4.org v0.0.0-20230225012048-214862532bf5
@@ -184,7 +175,6 @@ require (
 	github.com/taubyte/domain-validation v1.0.0 // indirect
 	github.com/taubyte/go-simple-container v0.4.2 // indirect
 	github.com/taubyte/go-simple-git v0.2.5 // indirect
-	github.com/taubyte/odo v0.0.0-00010101000000-000000000000
 	github.com/whyrusleeping/cbor-gen v0.0.0-20230126041949-52956bd4c9aa // indirect
 	github.com/whyrusleeping/chunker v0.0.0-20181014151217-fe64bd25879f // indirect
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
