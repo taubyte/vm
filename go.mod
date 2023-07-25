@@ -2,13 +2,21 @@ module github.com/taubyte/vm
 
 go 1.19
 
+replace github.com/taubyte/dreamland => /home/tafkhan/Documents/Work/Taubyte/new/dreamland
+
+replace github.com/taubyte/config-compiler => /home/tafkhan/Documents/Work/Taubyte/new/config-compiler
+
+replace github.com/taubyte/odo => /home/tafkhan/Documents/Work/Taubyte/new/odo
+
+replace github.com/taubyte/vm => /home/tafkhan/Documents/Work/Taubyte/Repos/vm
+
 require (
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multiaddr v0.10.1
 	github.com/spf13/afero v1.9.5
-	github.com/taubyte/go-interfaces v0.2.6
+	github.com/taubyte/go-interfaces v0.2.7
 	github.com/taubyte/go-specs v0.10.5
-	github.com/taubyte/odo v0.0.0-20230724194055-439dcb35eaf8
+	github.com/taubyte/odo v0.0.0-00010101000000-000000000000
 	github.com/taubyte/p2p v0.9.1
 	github.com/taubyte/utils v0.1.6
 	github.com/tetratelabs/wazero v1.0.3
