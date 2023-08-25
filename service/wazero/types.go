@@ -1,6 +1,7 @@
 package service
 
 import (
+	"container/list"
 	"context"
 	"io"
 	"sync"
@@ -50,6 +51,8 @@ type instance struct {
 	output    io.ReadWriteCloser
 	outputErr io.ReadWriteCloser
 	deps      map[string]vm.SourceModule
+	runtimes  *list.List
+	rtLock    sync.Mutex
 }
 
 /*************** Module Instance ***************/
@@ -62,8 +65,9 @@ type moduleInstance struct {
 /*************** Runtime ***************/
 
 type runtime struct {
-	instance *instance
-	runtime  wazero.Runtime
+	instance   *instance
+	runtime    wazero.Runtime
+	removeFunc func() *runtime
 
 	wasiStartError error
 	wasiStartDone  chan bool
