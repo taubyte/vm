@@ -7,8 +7,8 @@ require (
 	github.com/multiformats/go-multiaddr v0.10.1
 	github.com/spf13/afero v1.9.5
 	github.com/taubyte/go-specs v0.10.5
-	github.com/taubyte/p2p v0.9.1
-	github.com/taubyte/utils v0.1.6
+	github.com/taubyte/p2p v0.11.0
+	github.com/taubyte/utils v0.1.7
 	github.com/tetratelabs/wazero v1.0.3
 	go4.org v0.0.0-20230225012048-214862532bf5
 	gotest.tools/v3 v3.5.0
