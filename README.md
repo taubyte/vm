@@ -31,8 +31,3 @@ This project is licensed under the BSD 3-Clause License. For more details, pleas
 ## Help
 
 Join our [Discord](https://discord.gg/taubyte) community if you need assistance or want to engage with us!
-
-## Maintainers
-
- - Samy Fodil (@samyfodil)
- - Tafseer Khan (@tafseer-khan)

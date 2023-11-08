@@ -780,10 +780,10 @@ github.com/taubyte/go-specs v0.10.5 h1:R3eli3cpiw5WKMoO8MzO0+sk72LGTQXWSxUoWN7vs
 github.com/taubyte/go-specs v0.10.5/go.mod h1:HWMNhpmQzy/1Eg6s5TICKl+/talTXLX6jYEUuWCsaGg=
 github.com/taubyte/odo v0.0.0-20230726203810-bdae9f37e8f8 h1:+r57pU7UW1DZkBgOUsBh0zmRSg77sz+bJ3DaybLR3z0=
 github.com/taubyte/odo v0.0.0-20230726203810-bdae9f37e8f8/go.mod h1:20EXmQWoYWXGs0Yzrld5G8/203vII5/G59USMDfNx+s=
-github.com/taubyte/p2p v0.9.1 h1:W8whhWbYO5oCqOSUM+gNKCERtVGmTJHTZuTw+MJuswg=
-github.com/taubyte/p2p v0.9.1/go.mod h1:0vWZjiX8yNT3VwZO2x+mgRdEDCbwzSPOyyfBU3UEiTk=
-github.com/taubyte/utils v0.1.6 h1:bRSJZW/8E/wpT3wwyU3C97M9ddAJ52AfXFeP47JRGsY=
-github.com/taubyte/utils v0.1.6/go.mod h1:b/tKY1xKIxLH5ixFRTsrdz+vGhmiOcR9SpdVYiJDpsI=
+github.com/taubyte/p2p v0.11.0 h1:gtrCZk6/AqIB62UuRO3iz1mcqmqUc0/AoOmISGHyrB8=
+github.com/taubyte/p2p v0.11.0/go.mod h1:Uo464wZDiMeuP7GDHvjUjwGbnm72ByuGofk2O2m58yI=
+github.com/taubyte/utils v0.1.7 h1:iFMOxhBNJKdUrD+Z1UjP9W5559LlQN8178V54uLngdk=
+github.com/taubyte/utils v0.1.7/go.mod h1:MWO21qZu7AcBwJkJLsltwb3zWyN84xSexLCU28JC4gM=
 github.com/tetratelabs/wazero v1.0.3 h1:IWmaxc/5vKg71DE+c0SLjjLFAA3u3tD/Zegpgif2Wpo=
 github.com/tetratelabs/wazero v1.0.3/go.mod h1:wYx2gNRg8/WihJfSDxA1TIL8H+GkfLYm+bIfbblu9VQ=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
