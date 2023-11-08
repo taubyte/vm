@@ -11,15 +11,12 @@ import (
 )
 
 func downloadFile(url string, w io.Writer) error {
-
-	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
-	// Write the body to file
 	_, err = io.Copy(w, resp.Body)
 	if err != nil {
 		return err
