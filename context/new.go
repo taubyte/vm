@@ -3,8 +3,8 @@ package context
 import (
 	gocontext "context"
 
-	"github.com/taubyte/go-interfaces/vm"
 	spec "github.com/taubyte/go-specs/common"
+	vm "github.com/taubyte/vm/ifaces"
 )
 
 func New(ctx gocontext.Context, options ...Option) (vm.Context, error) {

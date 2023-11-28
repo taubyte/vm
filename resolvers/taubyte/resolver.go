@@ -7,12 +7,12 @@ import (
 
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/taubyte/go-interfaces/services/tns"
-	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/go-specs/extract"
 	functionSpec "github.com/taubyte/go-specs/function"
 	librarySpec "github.com/taubyte/go-specs/library"
 	"github.com/taubyte/go-specs/methods"
 	smartOpSpec "github.com/taubyte/go-specs/smartops"
+	vm "github.com/taubyte/vm/ifaces"
 )
 
 type resolver struct {

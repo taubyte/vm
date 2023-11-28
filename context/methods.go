@@ -3,7 +3,7 @@ package context
 import (
 	gocontext "context"
 
-	"github.com/taubyte/go-interfaces/vm"
+	vm "github.com/taubyte/vm/ifaces"
 )
 
 func (c *vmContext) Context() gocontext.Context {

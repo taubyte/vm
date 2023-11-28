@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/taubyte/go-interfaces/vm"
+	vm "github.com/taubyte/vm/ifaces"
 )
 
 type loader struct {

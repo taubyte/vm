@@ -3,8 +3,8 @@ package test_utils
 import (
 	gocontext "context"
 
-	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/vm/context"
+	vm "github.com/taubyte/vm/ifaces"
 )
 
 func Context() (vm.Context, error) {

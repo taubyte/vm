@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/vm/backend/errors"
+	vm "github.com/taubyte/vm/ifaces"
 
 	ma "github.com/multiformats/go-multiaddr"
 	resolv "github.com/taubyte/vm/resolvers/taubyte"

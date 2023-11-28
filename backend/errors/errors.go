@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/taubyte/go-interfaces/vm"
+	vm "github.com/taubyte/vm/ifaces"
 )
 
 func RetrieveError(path string, err error, backend vm.Backend) error {
