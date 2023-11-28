@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/taubyte/go-interfaces/vm"
 	fixtures "github.com/taubyte/vm/fixtures/wasm"
+	vm "github.com/taubyte/vm/ifaces"
 	resolv "github.com/taubyte/vm/resolvers/taubyte"
 	"gotest.tools/v3/assert"
 )

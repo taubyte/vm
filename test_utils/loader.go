@@ -3,9 +3,9 @@ package test_utils
 import (
 	"io"
 
-	"github.com/taubyte/go-interfaces/vm"
 	tns "github.com/taubyte/odo/protocols/tns/mocks"
 	"github.com/taubyte/p2p/peer"
+	vm "github.com/taubyte/vm/ifaces"
 	loaders "github.com/taubyte/vm/loaders/wazero"
 )
 

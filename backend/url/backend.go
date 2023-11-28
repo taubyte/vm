@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/taubyte/go-interfaces/vm"
 	"github.com/taubyte/vm/backend/errors"
+	vm "github.com/taubyte/vm/ifaces"
 )
 
 type backend struct{}
