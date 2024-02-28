@@ -9,7 +9,7 @@ import (
 	"github.com/taubyte/go-interfaces/vm"
 	functionSpec "github.com/taubyte/go-specs/function"
 	"github.com/taubyte/go-specs/methods"
-	"github.com/taubyte/odo/protocols/tns/mocks"
+	"github.com/taubyte/tau/protocols/tns/mocks"
 
 	"github.com/taubyte/vm/context"
 	"github.com/taubyte/vm/test_utils"
