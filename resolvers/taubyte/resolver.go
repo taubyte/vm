@@ -35,15 +35,14 @@ func (s *resolver) Lookup(ctx vm.Context, name string) (ma.Multiaddr, error) {
 	}
 
 	moduleType := splitAddress[0]
-	switch moduleType {
-	case "": // Multi-Address
+	if moduleType == "" {
 		multiAddr, err := ma.NewMultiaddr(name)
 		if err != nil {
 			return nil, fmt.Errorf("parsing multi-address `%s` failed with: %s", name, err)
 		}
 
 		return multiAddr, nil
-	default: // Local to project
+	} else if s.tns != nil {
 		switch moduleType {
 		case functionSpec.PathVariable.String(), smartOpSpec.PathVariable.String(), librarySpec.PathVariable.String(): // supported module types
 			if splitAddressLen != 2 {
@@ -59,6 +58,8 @@ func (s *resolver) Lookup(ctx vm.Context, name string) (ma.Multiaddr, error) {
 		default:
 			return nil, fmt.Errorf("invalid moduleType `%s`", moduleType)
 		}
+	} else {
+		return nil, fmt.Errorf("no TNS found")
 	}
 }
 

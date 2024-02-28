@@ -4,7 +4,7 @@ import (
 	"os"
 
 	structureSpec "github.com/taubyte/go-specs/structure"
-	"github.com/taubyte/odo/protocols/tns/mocks"
+	"github.com/taubyte/tau/protocols/tns/mocks"
 	"github.com/taubyte/utils/id"
 	"github.com/taubyte/vm/context"
 )

@@ -19,8 +19,14 @@ func (s *service) New(ctx vm.Context, config vm.Config) (vm.Instance, error) {
 		r.output = newBuffer()
 		r.outputErr = newBuffer()
 	default:
-		r.output = newPipe()
-		r.outputErr = newPipe()
+		var err error
+		if r.output, err = newPipe(); err != nil {
+			return nil, err
+		}
+
+		if r.outputErr, err = newPipe(); err != nil {
+			return nil, err
+		}
 	}
 
 	go func() {
