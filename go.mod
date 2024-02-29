@@ -2,8 +2,6 @@ module github.com/taubyte/vm
 
 go 1.21
 
-replace github.com/taubyte/tau => ../tau
-
 require (
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multiaddr v0.12.2
@@ -11,7 +9,7 @@ require (
 	github.com/taubyte/go-interfaces v0.2.14
 	github.com/taubyte/go-specs v0.10.8
 	github.com/taubyte/p2p v0.11.1
-	github.com/taubyte/tau v0.0.0-00010101000000-000000000000
+	github.com/taubyte/tau v1.1.3-0.20240229000207-b93516a014ee
 	github.com/taubyte/utils v0.1.7
 	github.com/tetratelabs/wazero v1.6.0
 	go4.org v0.0.0-20230225012048-214862532bf5
@@ -71,6 +69,7 @@ require (
 	github.com/google/pprof v0.0.0-20240207164012-fb44976bdcd5 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/gookit/color v1.5.3 // indirect
+	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/gxed/hashland/keccakpg v0.0.1 // indirect
@@ -167,6 +166,7 @@ require (
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/smartystreets/assertions v1.13.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/taubyte/domain-validation v1.0.1 // indirect
 	github.com/taubyte/go-simple-container v0.4.5 // indirect
